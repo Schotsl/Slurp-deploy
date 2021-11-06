@@ -32,8 +32,6 @@ export default class EntryController implements InterfaceController {
     );
   }
 
-  // TODO: Order everything as neatly as this :)
-
   async removeObject(
     { response, params, state }: {
       response: Response;

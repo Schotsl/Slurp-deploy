@@ -1,6 +1,6 @@
 import { create, verify } from "https://deno.land/x/djwt@v2.3/mod.ts";
-import { Context } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
+import { Request, State } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 import {
   InvalidAuthentication,
   MissingAuthentication,
@@ -38,16 +38,19 @@ export async function verifyToken(token: string) {
 }
 
 export async function authenticationHandler(
-  ctx: Context,
+  { request, state }: {
+    request: Request;
+    state: State;
+  },
   next: () => Promise<unknown>,
 ): Promise<void> {
-  const header = ctx.request.headers.get("Authorization");
+  const header = request.headers.get("Authorization");
   const token = header?.split(" ")[1];
 
   if (token) {
     const payload = await verifyToken(token);
 
-    ctx.state.uuid = payload.uuid;
+    state.uuid = payload.uuid;
 
     await next();
     return;
