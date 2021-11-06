@@ -6,7 +6,7 @@ import EntryController from "../controller/EntryController.ts";
 
 const entryController = new EntryController(mysqlClient);
 const entryRouter = new Router({
-  prefix: "/entry",
+  prefix: "v1/entry",
 });
 
 entryRouter.use(authenticationHandler);
