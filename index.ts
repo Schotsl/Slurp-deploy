@@ -6,8 +6,8 @@ import {
   postHandler,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/middleware.ts";
 
-import entryRouter from "./router/playerRouter.ts";
-import serverRouter from "./router/playerRouter.ts";
+import entryRouter from "./router/entryRouter.ts";
+import serverRouter from "./router/serverRouter.ts";
 import playerRouter from "./router/playerRouter.ts";
 
 const application = new Application();

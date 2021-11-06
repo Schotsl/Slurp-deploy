@@ -5,7 +5,7 @@ import ServerController from "../controller/ServerController.ts";
 
 const serverController = new ServerController(mysqlClient);
 const serverRouter = new Router({
-  prefix: "v1/server",
+  prefix: "/v1/server",
 });
 
 serverRouter.get(

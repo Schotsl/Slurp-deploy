@@ -6,7 +6,7 @@ import PlayerController from "../controller/PlayerController.ts";
 
 const playerController = new PlayerController(mysqlClient);
 const playerRouter = new Router({
-  prefix: "v1/player",
+  prefix: "/v1/player",
 });
 
 playerRouter.use(authenticationHandler);
