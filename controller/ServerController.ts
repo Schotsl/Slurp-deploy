@@ -1,6 +1,10 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { createToken } from "../middleware.ts";
-import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import {
+  Request,
+  Response,
+  State,
+} from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import ServerEntity from "../entity/ServerEntity.ts";
 import ServerRepository from "../repository/ServerRepository.ts";
@@ -14,17 +18,14 @@ export default class ServerController implements InterfaceController {
   }
 
   async getCollection(
-    { response, request }: {
+    { response, state }: {
       response: Response;
-      request: Request;
+      state: State;
     },
   ) {
-    const limit = Number(request.url.searchParams.get(`limit`));
-    const offset = Number(request.url.searchParams.get(`offset`));
-
     response.body = await this.serverRepository.getCollection(
-      offset,
-      limit,
+      state.offset,
+      state.limit,
     );
   }
 

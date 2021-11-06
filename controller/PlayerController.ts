@@ -18,14 +18,14 @@ export default class PlayerController implements InterfaceController {
   }
 
   async getCollection(
-    { request, response }: { request: Request; response: Response },
+    { response, state }: {
+      response: Response;
+      state: State;
+    },
   ) {
-    const limit = Number(request.url.searchParams.get(`limit`));
-    const offset = Number(request.url.searchParams.get(`offset`));
-
     response.body = await this.playerRepository.getCollection(
-      offset,
-      limit,
+      state.offset,
+      state.limit,
     );
   }
 
