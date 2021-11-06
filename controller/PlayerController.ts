@@ -1,15 +1,16 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
+import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
-import ServerEntity from "../entity/ServerEntity.ts";
-import ServerRepository from "../repository/ServerRepository.ts";
+import PlayerEntity from "../entity/PlayerEntity.ts";
+import PlayerRepository from "../repository/PlayerRepository.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
-export default class ServerController implements InterfaceController {
-  private serverRepository: ServerRepository;
+export default class PlayerController implements InterfaceController {
+  private playerRepository: PlayerRepository;
 
   constructor(mysqlClient: Client) {
-    this.serverRepository = new ServerRepository(mysqlClient);
+    this.playerRepository = new PlayerRepository(mysqlClient);
   }
 
   async getCollection(
@@ -18,7 +19,7 @@ export default class ServerController implements InterfaceController {
     const limit = Number(request.url.searchParams.get(`limit`));
     const offset = Number(request.url.searchParams.get(`offset`));
 
-    response.body = await this.serverRepository.getCollection(
+    response.body = await this.playerRepository.getCollection(
       offset,
       limit,
     );
@@ -31,7 +32,7 @@ export default class ServerController implements InterfaceController {
       response: Response;
     },
   ) {
-    await this.serverRepository.removeObject(params.uuid);
+    await this.playerRepository.removeObject(params.uuid);
 
     response.status = 204;
   }
@@ -47,12 +48,13 @@ export default class ServerController implements InterfaceController {
     const value = await body.value;
     delete value.uuid;
 
-    // TODO: Prevent non existing properties from being copied
+    validateUUID(value.player, "player", true);
+    validateUUID(value.server, "server", true);
 
-    const server = new ServerEntity(params.uuid);
-    Object.assign(server, value);
+    const player = new PlayerEntity(params.uuid);
+    Object.assign(player, value);
 
-    response.body = await this.serverRepository.updateObject(server);
+    response.body = await this.playerRepository.updateObject(player);
   }
 
   async addObject(
@@ -62,9 +64,12 @@ export default class ServerController implements InterfaceController {
     const value = await body.value;
     delete value.uuid;
 
-    const server = new ServerEntity();
-    Object.assign(server, value);
+    validateUUID(value.player, "player");
+    validateUUID(value.server, "server");
 
-    response.body = await this.serverRepository.addObject(server);
+    const player = new PlayerEntity();
+    Object.assign(player, value);
+
+    response.body = await this.playerRepository.addObject(player);
   }
 }
