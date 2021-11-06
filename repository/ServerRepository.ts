@@ -41,7 +41,7 @@ export default class ServerRepository implements InterfaceRepository {
     object: Partial<ServerEntity>,
   ): Promise<ServerEntity> {
     const values = [];
-    const exclude = ["created", "updated", "uuid"];
+    const exclude = ["created", "updated", "uuid", "token"];
 
     let query = "UPDATE server SET";
 

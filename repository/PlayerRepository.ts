@@ -25,7 +25,7 @@ export default class PlayerRepository implements InterfaceRepository {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(player.uuid) AS uuid, HEX(player.player) AS player, HEX(player.server) AS server, player.created, player.updated, SUM(entry.sips) AS sips_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) as sips_taken, SUM(entry.shots) AS shots_remainig, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) as shots_taken FROM player LEFT JOIN entry ON player.uuid = entry.player GROUP BY player.uuid ORDER BY player.created DESC LIMIT ? OFFSET ?`,
+      `SELECT HEX(player.uuid) AS uuid, HEX(player.server) AS server, player.created, player.updated, IFNULL(SUM(entry.sips), 0) AS sips_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) as sips_taken, IFNULL(SUM(entry.shots), 0) AS shots_remainig, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) as shots_taken FROM player LEFT JOIN entry ON player.uuid = entry.player GROUP BY player.uuid, player.server ORDER BY player.created DESC LIMIT ? OFFSET ?`,
       [limit, offset],
     ));
 
@@ -44,7 +44,14 @@ export default class PlayerRepository implements InterfaceRepository {
     object: Partial<PlayerEntity>,
   ): Promise<PlayerEntity> {
     const values = [];
-    const exclude = ["created", "updated", "uuid", "player", "server"];
+    const exclude = [
+      "created",
+      "updated",
+      "uuid",
+      "server",
+      "taken",
+      "remaining",
+    ];
 
     let query = "UPDATE player SET";
 
@@ -57,31 +64,26 @@ export default class PlayerRepository implements InterfaceRepository {
 
     // TODO: Make sure provided server is a valid UUID reference
 
-    if (object.player !== null) {
-      query += ` player=UNHEX(REPLACE(?, '-', '')),`;
-      values.push(object.player);
-    }
-
-    if (object.server !== null) {
-      query += ` server=UNHEX(REPLACE(?, '-', '')),`;
-      values.push(object.server);
-    }
-
     if (values.length > 0) {
       query = query.slice(0, -1);
-      query += " WHERE player.uuid = UNHEX(REPLACE(?, '-', ''))";
+      query +=
+        " WHERE player.uuid = UNHEX(REPLACE(?, '-', '')) AND player.server = server(REPLACE(?, '-', ''))";
 
-      await this.mysqlClient.execute(query, [...values, object.uuid]);
+      await this.mysqlClient.execute(query, [
+        ...values,
+        object.uuid,
+        object.server,
+      ]);
     }
 
-    const data = await this.getObject(object.uuid!);
+    const data = await this.getObject(object.uuid!, object.server!);
     return data!;
   }
 
-  public async removeObject(uuid: string): Promise<void> {
+  public async removeObject(uuid: string, server: string): Promise<void> {
     const deleteResult = await this.mysqlClient.execute(
-      `DELETE FROM player WHERE player.uuid = UNHEX(REPLACE(?, '-', ''))`,
-      [uuid],
+      `DELETE FROM player WHERE player.uuid = UNHEX(REPLACE(?, '-', '')) AND player.server = UNHEX(REPLACE(?, '-', ''))`,
+      [uuid, server],
     );
 
     if (deleteResult.affectedRows === 0) {
@@ -91,31 +93,30 @@ export default class PlayerRepository implements InterfaceRepository {
 
   public async addObject(object: PlayerEntity): Promise<PlayerEntity> {
     await this.mysqlClient.execute(
-      `INSERT INTO player (uuid, player, server) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')))`,
+      `INSERT INTO player (uuid, server) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')))`,
       [
         object.uuid,
-        object.player,
         object.server,
       ],
     ).catch((error: Error) => {
       const message = error.message;
-      const ending = message.slice(-23);
+      const ending = message.slice(-24);
 
-      if (ending === "for key 'player.player'") {
+      if (ending === "for key 'player.PRIMARY'") {
         throw new DuplicateResource("player");
       }
 
       throw error;
     });
 
-    const result = await this.getObject(object.uuid);
+    const result = await this.getObject(object.uuid, object.server!);
     return result!;
   }
 
-  public async getObject(uuid: string): Promise<PlayerEntity> {
+  public async getObject(uuid: string, server: string): Promise<PlayerEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(player.uuid) AS uuid, HEX(player.player) AS player, HEX(player.server) AS server, player.created, player.updated, SUM(entry.sips) AS sips_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) as sips_taken, SUM(entry.shots) AS shots_remainig, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) as shots_taken FROM player LEFT JOIN entry ON player.uuid = entry.player GROUP BY player.uuid WHERE player.uuid = UNHEX(REPLACE(?, '-', ''))`,
-      [uuid],
+      `SELECT HEX(player.uuid) AS uuid, HEX(player.server) AS server, player.created, player.updated, IFNULL(SUM(entry.sips), 0) AS sips_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) as sips_taken, IFNULL(SUM(entry.shots), 0) AS shots_remainig, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) as shots_taken FROM player LEFT JOIN entry ON player.uuid = entry.player WHERE player.uuid = UNHEX(REPLACE(?, '-', '')) AND player.server = UNHEX(REPLACE(?, '-', '')) GROUP BY player.uuid, player.server`,
+      [uuid, server],
     );
 
     if (typeof data.rows === "undefined" || data.rows.length === 0) {

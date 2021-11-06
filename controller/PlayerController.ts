@@ -1,6 +1,10 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
-import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import {
+  Request,
+  Response,
+  State,
+} from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import PlayerEntity from "../entity/PlayerEntity.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
@@ -26,30 +30,30 @@ export default class PlayerController implements InterfaceController {
   }
 
   async removeObject(
-    { params, response }: {
+    { response, params, state }: {
+      response: Response;
       request: Request;
       params: { uuid: string };
-      response: Response;
+      state: State;
     },
   ) {
-    await this.playerRepository.removeObject(params.uuid);
+    await this.playerRepository.removeObject(params.uuid, state.uuid);
 
     response.status = 204;
   }
 
   async updateObject(
-    { request, params, response }: {
+    { response, request, params, state }: {
+      response: Response;
       request: Request;
       params: { uuid: string };
-      response: Response;
+      state: State;
     },
   ) {
     const body = await request.body();
     const value = await body.value;
-    delete value.uuid;
 
-    validateUUID(value.player, "player", true);
-    validateUUID(value.server, "server", true);
+    value.server = state.uuid;
 
     const player = new PlayerEntity(params.uuid);
     Object.assign(player, value);
@@ -58,14 +62,18 @@ export default class PlayerController implements InterfaceController {
   }
 
   async addObject(
-    { request, response }: { request: Request; response: Response },
+    { response, request, state }: {
+      response: Response;
+      request: Request;
+      state: State;
+    },
   ) {
     const body = await request.body();
     const value = await body.value;
-    delete value.uuid;
 
-    validateUUID(value.player, "player");
-    validateUUID(value.server, "server");
+    value.server = state.uuid;
+
+    validateUUID(value.uuid, "uuid");
 
     const player = new PlayerEntity();
     Object.assign(player, value);

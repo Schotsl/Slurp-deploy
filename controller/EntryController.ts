@@ -1,5 +1,8 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { validateNumber, validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+import {
+  validateNumber,
+  validateUUID,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import EntryEntity from "../entity/EntryEntity.ts";
@@ -46,6 +49,7 @@ export default class EntryController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
+
     delete value.uuid;
 
     validateUUID(value.player, "player", true);
@@ -64,6 +68,7 @@ export default class EntryController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
+
     delete value.uuid;
 
     validateUUID(value.player, "player");

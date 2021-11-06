@@ -9,7 +9,6 @@ export default class PlayerMapper implements InterfaceMapper {
     const uuid = restoreUUID(row.uuid);
     const player = new PlayerEntity(uuid);
 
-    player.player = restoreUUID(row.player);
     player.server = restoreUUID(row.server);
 
     player.taken.sips = parseInt(row.sips_taken);

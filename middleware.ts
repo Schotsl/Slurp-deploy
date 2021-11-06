@@ -1,7 +1,10 @@
 import { create, verify } from "https://deno.land/x/djwt@v2.3/mod.ts";
 import { Context } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
-import { MissingAuthentication, InvalidAuthentication } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import {
+  InvalidAuthentication,
+  MissingAuthentication,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
 initializeEnv([
   "SLURP_SERVER_JWT_SECRET",
@@ -32,8 +35,7 @@ export async function verifyToken(token: string) {
   return await verify(token, key).catch(() => {
     throw new InvalidAuthentication();
   });
-};
-
+}
 
 export async function authenticationHandler(
   ctx: Context,
@@ -45,11 +47,11 @@ export async function authenticationHandler(
   if (token) {
     const payload = await verifyToken(token);
 
-    // ctx.state.uuid = payload.uuid;
+    ctx.state.uuid = payload.uuid;
 
     await next();
     return;
   }
 
   throw new MissingAuthentication();
-};
+}

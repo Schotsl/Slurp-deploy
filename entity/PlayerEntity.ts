@@ -6,7 +6,6 @@ interface Consumable {
 }
 
 export default class PlayerEntity extends BaseEntity {
-  public player: string | undefined;
   public server: string | undefined;
 
   public taken: Consumable = {

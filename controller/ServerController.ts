@@ -46,6 +46,7 @@ export default class ServerController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
+
     delete value.uuid;
 
     // TODO: Prevent non existing properties from being copied
@@ -61,6 +62,7 @@ export default class ServerController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
+
     delete value.uuid;
 
     const server = new ServerEntity();
