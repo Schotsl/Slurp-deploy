@@ -4,6 +4,7 @@ import { testMysql } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/ma
 import { configLogger } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
+import EntryController from "./controller/EntryController.ts";
 import ServerController from "./controller/ServerController.ts";
 import PlayerController from "./controller/PlayerController.ts";
 
@@ -33,6 +34,7 @@ await testMysql(mysqlClient);
 
 const serverController = new ServerController(mysqlClient);
 const playerController = new PlayerController(mysqlClient);
+const entryController = new EntryController(mysqlClient);
 
 const router = new Router();
 
@@ -74,6 +76,26 @@ router.put(
 router.delete(
   "/v1/player/:uuid",
   playerController.removeObject.bind(playerController),
+);
+
+router.get(
+  "/v1/entry",
+  entryController.getCollection.bind(entryController),
+);
+
+router.post(
+  "/v1/entry",
+  entryController.addObject.bind(entryController),
+);
+
+router.put(
+  "/v1/entry/:uuid",
+  entryController.updateObject.bind(entryController),
+);
+
+router.delete(
+  "/v1/entry/:uuid",
+  entryController.removeObject.bind(entryController),
 );
 
 export default router;
