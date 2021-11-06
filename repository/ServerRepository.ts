@@ -88,7 +88,7 @@ export default class ServerRepository implements InterfaceRepository {
 
   public async getObject(uuid: string): Promise<ServerEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(server.uuid) AS uuid, server.created, server.updated FROM server WHERE uuid = UNHEX(REPLACE(?, '-', ''))`,
+      `SELECT HEX(server.uuid) AS uuid, server.created, server.updated FROM server WHERE server.uuid = UNHEX(REPLACE(?, '-', ''))`,
       [uuid],
     );
 

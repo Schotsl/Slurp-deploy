@@ -83,13 +83,16 @@ export default class EntryRepository implements InterfaceRepository {
   }
 
   public async addObject(object: EntryEntity): Promise<EntryEntity> {
+    const sips = object.sips ? object.sips : 0;
+    const shots = object.shots ? object.shots : 0;
+
     await this.mysqlClient.execute(
       `INSERT INTO entry (uuid, player, shots, sips) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), ?, ?)`,
       [
         object.uuid,
         object.player,
-        object.shots,
-        object.sips,
+        shots,
+        sips,
       ],
     ).catch((error: Error) => {
       const message = error.message;
@@ -108,7 +111,7 @@ export default class EntryRepository implements InterfaceRepository {
 
   public async getObject(uuid: string): Promise<EntryEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, shots, sips, entry.created, entry.updated FROM entry WHERE uuid = UNHEX(REPLACE(?, '-', ''))`,
+      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, shots, sips, entry.created, entry.updated FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))`,
       [uuid],
     );
 

@@ -25,7 +25,7 @@ export default class PlayerRepository implements InterfaceRepository {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(player.uuid) AS uuid, HEX(player.player) AS player, HEX(player.server) AS server, player.created, player.updated FROM player ORDER BY player.created DESC LIMIT ? OFFSET ?`,
+      `SELECT HEX(player.uuid) AS uuid, HEX(player.player) AS player, HEX(player.server) AS server, player.created, player.updated, SUM(entry.sips) AS sips_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) as sips_taken, SUM(entry.shots) AS shots_remainig, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) as shots_taken FROM player LEFT JOIN entry ON player.uuid = entry.player GROUP BY player.uuid ORDER BY player.created DESC LIMIT ? OFFSET ?`,
       [limit, offset],
     ));
 
@@ -114,7 +114,7 @@ export default class PlayerRepository implements InterfaceRepository {
 
   public async getObject(uuid: string): Promise<PlayerEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(player.uuid) AS uuid, HEX(player.player) AS player, HEX(player.server) AS server, player.created, player.updated FROM player WHERE uuid = UNHEX(REPLACE(?, '-', ''))`,
+      `SELECT HEX(player.uuid) AS uuid, HEX(player.player) AS player, HEX(player.server) AS server, player.created, player.updated, SUM(entry.sips) AS sips_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) as sips_taken, SUM(entry.shots) AS shots_remainig, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) as shots_taken FROM player LEFT JOIN entry ON player.uuid = entry.player GROUP BY player.uuid WHERE player.uuid = UNHEX(REPLACE(?, '-', ''))`,
       [uuid],
     );
 
