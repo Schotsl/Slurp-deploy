@@ -12,11 +12,11 @@ export default class PlayerMapper implements InterfaceMapper {
     player.player = restoreUUID(row.player);
     player.server = restoreUUID(row.server);
 
-    player.taken.shots = parseInt(row.shots_taken);
     player.taken.sips = parseInt(row.sips_taken);
+    player.taken.shots = parseInt(row.shots_taken);
 
-    player.remaining.shots = parseInt(row.shots_remainig);
     player.remaining.sips = parseInt(row.sips_remaining);
+    player.remaining.shots = parseInt(row.shots_remainig);
 
     player.created = row.created;
     player.updated = row.updated;
