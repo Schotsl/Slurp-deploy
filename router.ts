@@ -3,6 +3,7 @@ import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { testMysql } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/testing.ts";
 import { configLogger } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
+import { authenticationHandler } from "./middleware.ts";
 
 import EntryController from "./controller/EntryController.ts";
 import ServerController from "./controller/ServerController.ts";
@@ -60,41 +61,49 @@ router.delete(
 
 router.get(
   "/v1/player",
+  authenticationHandler,
   playerController.getCollection.bind(playerController),
 );
 
 router.post(
   "/v1/player",
+  authenticationHandler,
   playerController.addObject.bind(playerController),
 );
 
 router.put(
   "/v1/player/:uuid",
+  authenticationHandler,
   playerController.updateObject.bind(playerController),
 );
 
 router.delete(
   "/v1/player/:uuid",
+  authenticationHandler,
   playerController.removeObject.bind(playerController),
 );
 
 router.get(
   "/v1/entry",
+  authenticationHandler,
   entryController.getCollection.bind(entryController),
 );
 
 router.post(
   "/v1/entry",
+  authenticationHandler,
   entryController.addObject.bind(entryController),
 );
 
 router.put(
   "/v1/entry/:uuid",
+  authenticationHandler,
   entryController.updateObject.bind(entryController),
 );
 
 router.delete(
   "/v1/entry/:uuid",
+  authenticationHandler,
   entryController.removeObject.bind(entryController),
 );
 

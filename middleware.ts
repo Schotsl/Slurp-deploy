@@ -1,46 +1,51 @@
-import { verify } from "https://deno.land/x/djwt@v2.2/mod.ts";
-import { Context } from "https://deno.land/x/oak@v7.6.3/mod.ts";
-import { UberdenoError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import { create, verify } from "https://deno.land/x/djwt@v2.3/mod.ts";
+import { Context } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
+import { MissingAuthentication, InvalidAuthentication } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
-class InvalidAuthentication extends UberdenoError {
-  public statusError = 403;
+initializeEnv([
+  "SLURP_SERVER_JWT_SECRET",
+]);
 
-  constructor() {
-    super("Bruh you finna pull this?");
-  }
+const secret = Deno.env.get("SLURP_SERVER_JWT_SECRET");
+const encoder = new TextEncoder();
+const encoded = encoder.encode(secret!);
+
+const format = "raw";
+const usages: KeyUsage[] = ["sign", "verify"];
+const algorithm = { name: "HMAC", hash: "SHA-512" };
+const extractable = true;
+
+const key = await crypto.subtle.importKey(
+  format,
+  encoded,
+  algorithm,
+  extractable,
+  usages,
+);
+
+export async function createToken(uuid: string) {
+  return await create({ alg: "HS512", typ: "JWT" }, { uuid }, key);
 }
 
-class MissingAuthentication extends UberdenoError {
-  public statusError = 401;
+export async function verifyToken(token: string) {
+  return await verify(token, key).catch(() => {
+    throw new InvalidAuthentication();
+  });
+};
 
-  constructor() {
-    super("Bruh you finna pull this?");
-  }
-}
 
-// Fetch the variables and convert them to right datatype
-const secret = "bruh";
-
-export const authenticationHandler = async (
+export async function authenticationHandler(
   ctx: Context,
   next: () => Promise<unknown>,
-) => {
-  // Get the JWT token from the Authorization header
+): Promise<void> {
   const header = ctx.request.headers.get("Authorization");
   const token = header?.split(" ")[1];
 
   if (token) {
-    // Verify and decrypt the payload
-    const payload = await verify(
-      token,
-      secret,
-      "HS512",
-    ).catch(() => {
-      throw new InvalidAuthentication();
-    });
+    const payload = await verifyToken(token);
 
-    // Store the users UUID
-    ctx.state.uuid = payload.uuid;
+    // ctx.state.uuid = payload.uuid;
 
     await next();
     return;
