@@ -13,17 +13,17 @@ entryRouter.use(authenticationHandler);
 
 entryRouter.get(
   "/",
-  entryController.getCollection.bind(entryController)
+  entryController.getCollection.bind(entryController),
 );
 
 entryRouter.post(
   "/",
-  entryController.addObject.bind(entryController)
+  entryController.addObject.bind(entryController),
 );
 
 entryRouter.put(
   "/:uuid",
-  entryController.updateObject.bind(entryController)
+  entryController.updateObject.bind(entryController),
 );
 
 entryRouter.delete(

@@ -14,7 +14,10 @@ export default class ServerController implements InterfaceController {
   }
 
   async getCollection(
-    { request, response }: { request: Request; response: Response },
+    { response, request }: {
+      response: Response;
+      request: Request;
+    },
   ) {
     const limit = Number(request.url.searchParams.get(`limit`));
     const offset = Number(request.url.searchParams.get(`offset`));
@@ -26,10 +29,10 @@ export default class ServerController implements InterfaceController {
   }
 
   async removeObject(
-    { params, response }: {
+    { response, params }: {
+      response: Response;
       request: Request;
       params: { uuid: string };
-      response: Response;
     },
   ) {
     await this.serverRepository.removeObject(params.uuid);
@@ -38,10 +41,10 @@ export default class ServerController implements InterfaceController {
   }
 
   async updateObject(
-    { request, params, response }: {
+    { response, request, params }: {
+      response: Response;
       request: Request;
       params: { uuid: string };
-      response: Response;
     },
   ) {
     const body = await request.body();
@@ -58,7 +61,10 @@ export default class ServerController implements InterfaceController {
   }
 
   async addObject(
-    { request, response }: { request: Request; response: Response },
+    { response, request }: {
+      response: Response;
+      request: Request;
+    },
   ) {
     const body = await request.body();
     const value = await body.value;

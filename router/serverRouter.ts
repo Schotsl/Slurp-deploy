@@ -10,12 +10,12 @@ const serverRouter = new Router({
 
 serverRouter.get(
   "/",
-  serverController.getCollection.bind(serverController)
+  serverController.getCollection.bind(serverController),
 );
 
 serverRouter.post(
   "/",
-  serverController.addObject.bind(serverController)
+  serverController.addObject.bind(serverController),
 );
 
 serverRouter.put(

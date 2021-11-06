@@ -12,13 +12,13 @@ const playerRouter = new Router({
 playerRouter.use(authenticationHandler);
 
 playerRouter.get(
-  "/", 
-  playerController.getCollection.bind(playerController)
+  "/",
+  playerController.getCollection.bind(playerController),
 );
 
 playerRouter.post(
   "/",
-  playerController.addObject.bind(playerController)
+  playerController.addObject.bind(playerController),
 );
 
 playerRouter.put(
