@@ -25,7 +25,7 @@ export default class EntryRepository implements InterfaceRepository {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, shots, sips, entry.created, entry.updated FROM entry ORDER BY entry.created DESC LIMIT ? OFFSET ?`,
+      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, HEX(entry.server) AS server, entry.shots, entry.sips, entry.created, entry.updated FROM entry ORDER BY entry.created DESC LIMIT ? OFFSET ?`,
       [limit, offset],
     ));
 
@@ -44,7 +44,7 @@ export default class EntryRepository implements InterfaceRepository {
     object: Partial<EntryEntity>,
   ): Promise<EntryEntity> {
     const values = [];
-    const exclude = ["created", "updated", "uuid"];
+    const exclude = ["created", "updated", "uuid", "player", "server"];
 
     let query = "UPDATE entry SET";
 
@@ -60,6 +60,11 @@ export default class EntryRepository implements InterfaceRepository {
       values.push(object.player);
     }
 
+    if (object.server !== null) {
+      query += ` server=UNHEX(REPLACE(?, '-', '')),`;
+      values.push(object.server);
+    }
+
     if (values.length > 0) {
       query = query.slice(0, -1);
       query += " WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))";
@@ -71,10 +76,10 @@ export default class EntryRepository implements InterfaceRepository {
     return data!;
   }
 
-  public async removeObject(uuid: string): Promise<void> {
+  public async removeObject(uuid: string, server: string): Promise<void> {
     const deleteResult = await this.mysqlClient.execute(
-      `DELETE FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))`,
-      [uuid],
+      `DELETE FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', '')) AND entry.server = UNHEX(REPLACE(?, '-', ''))`,
+      [uuid, server],
     );
 
     if (deleteResult.affectedRows === 0) {
@@ -87,10 +92,11 @@ export default class EntryRepository implements InterfaceRepository {
     const shots = object.shots ? object.shots : 0;
 
     await this.mysqlClient.execute(
-      `INSERT INTO entry (uuid, player, shots, sips) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), ?, ?)`,
+      `INSERT INTO entry (uuid, player, server, shots, sips) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), ?, ?)`,
       [
         object.uuid,
         object.player,
+        object.server,
         shots,
         sips,
       ],
@@ -111,7 +117,7 @@ export default class EntryRepository implements InterfaceRepository {
 
   public async getObject(uuid: string): Promise<EntryEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, shots, sips, entry.created, entry.updated FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))`,
+      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, HEX(entry.server) AS server, shots, sips, entry.created, entry.updated FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))`,
       [uuid],
     );
 

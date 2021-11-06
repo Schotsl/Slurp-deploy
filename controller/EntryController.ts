@@ -1,9 +1,13 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import {
-  validateNumber,
+  validateTinyint,
   validateUUID,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
-import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import {
+  Request,
+  Response,
+  State,
+} from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import EntryEntity from "../entity/EntryEntity.ts";
 import EntryRepository from "../repository/EntryRepository.ts";
@@ -28,34 +32,38 @@ export default class EntryController implements InterfaceController {
     );
   }
 
+  // TODO: Order everything as neatly as this :)
+
   async removeObject(
-    { params, response }: {
+    { response, params, state }: {
+      response: Response;
       request: Request;
       params: { uuid: string };
-      response: Response;
+      state: State;
     },
   ) {
-    await this.entryRepository.removeObject(params.uuid);
+    await this.entryRepository.removeObject(params.uuid, state.uuid);
 
     response.status = 204;
   }
 
   async updateObject(
-    { request, params, response }: {
+    { response, request, params, state }: {
+      response: Response;
       request: Request;
       params: { uuid: string };
-      response: Response;
+      state: State;
     },
   ) {
     const body = await request.body();
     const value = await body.value;
 
     delete value.uuid;
+    value.server = state.uuid;
 
     validateUUID(value.player, "player", true);
-
-    validateNumber(value.sips, "sips", true);
-    validateNumber(value.shots, "shots", true);
+    validateTinyint(value.sips, "sips", true);
+    validateTinyint(value.shots, "shots", true);
 
     const entry = new EntryEntity(params.uuid);
     Object.assign(entry, value);
@@ -64,17 +72,21 @@ export default class EntryController implements InterfaceController {
   }
 
   async addObject(
-    { request, response }: { request: Request; response: Response },
+    { response, request, state }: {
+      response: Response;
+      request: Request;
+      state: State;
+    },
   ) {
     const body = await request.body();
     const value = await body.value;
 
     delete value.uuid;
+    value.server = state.uuid;
 
     validateUUID(value.player, "player");
-
-    validateNumber(value.sips, "sips", true);
-    validateNumber(value.shots, "shots", true);
+    validateTinyint(value.sips, "sips", true);
+    validateTinyint(value.shots, "shots", true);
 
     const entry = new EntryEntity();
     Object.assign(entry, value);

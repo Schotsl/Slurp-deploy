@@ -10,6 +10,7 @@ export default class EntryMapper implements InterfaceMapper {
     const entry = new EntryEntity(uuid);
 
     entry.player = restoreUUID(row.player);
+    entry.server = restoreUUID(row.server);
 
     entry.sips = row.sips;
     entry.shots = row.shots;
