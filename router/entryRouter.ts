@@ -10,9 +10,25 @@ const entryRouter = new Router({
 });
 
 entryRouter.use(authenticationHandler);
-entryRouter.get("/", entryController.getCollection.bind(entryController));
-entryRouter.post("/", entryController.addObject.bind(entryController));
-entryRouter.put("/:uuid", entryController.updateObject.bind(entryController));
-entryRouter.delete("/:uuid", entryController.removeObject.bind(entryController));
+
+entryRouter.get(
+  "/",
+  entryController.getCollection.bind(entryController)
+);
+
+entryRouter.post(
+  "/",
+  entryController.addObject.bind(entryController)
+);
+
+entryRouter.put(
+  "/:uuid",
+  entryController.updateObject.bind(entryController)
+);
+
+entryRouter.delete(
+  "/:uuid",
+  entryController.removeObject.bind(entryController),
+);
 
 export default entryRouter;

@@ -10,9 +10,25 @@ const playerRouter = new Router({
 });
 
 playerRouter.use(authenticationHandler);
-playerRouter.get("/", playerController.getCollection.bind(playerController));
-playerRouter.post("/", playerController.addObject.bind(playerController));
-playerRouter.put("/:uuid", playerController.updateObject.bind(playerController));
-playerRouter.delete("/:uuid", playerController.removeObject.bind(playerController));
+
+playerRouter.get(
+  "/", 
+  playerController.getCollection.bind(playerController)
+);
+
+playerRouter.post(
+  "/",
+  playerController.addObject.bind(playerController)
+);
+
+playerRouter.put(
+  "/:uuid",
+  playerController.updateObject.bind(playerController),
+);
+
+playerRouter.delete(
+  "/:uuid",
+  playerController.removeObject.bind(playerController),
+);
 
 export default playerRouter;
