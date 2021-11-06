@@ -1,5 +1,5 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { validateNumber, validateUUID } from "../../Uberdeno/validation.ts";
+import { validateNumber, validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import { Request, Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import EntryEntity from "../entity/EntryEntity.ts";
