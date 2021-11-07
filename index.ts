@@ -6,6 +6,7 @@ import {
   postHandler,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/middleware.ts";
 
+import graphRouter from "./router/graphRouter.ts";
 import entryRouter from "./router/entryRouter.ts";
 import serverRouter from "./router/serverRouter.ts";
 import playerRouter from "./router/playerRouter.ts";
@@ -14,14 +15,16 @@ const application = new Application();
 
 application.use(oakCors());
 
-application.use(postHandler);
 application.use(errorHandler);
 application.use(limitHandler);
+application.use(postHandler);
 
+application.use(graphRouter.routes());
 application.use(entryRouter.routes());
 application.use(serverRouter.routes());
 application.use(playerRouter.routes());
 
+application.use(graphRouter.allowedMethods());
 application.use(entryRouter.allowedMethods());
 application.use(serverRouter.allowedMethods());
 application.use(playerRouter.allowedMethods());
