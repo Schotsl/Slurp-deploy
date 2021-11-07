@@ -15,7 +15,7 @@ export default class PlayerMapper implements InterfaceMapper {
     player.taken.shots = parseInt(row.shots_taken);
 
     player.remaining.sips = parseInt(row.sips_remaining);
-    player.remaining.shots = parseInt(row.shots_remainig);
+    player.remaining.shots = parseInt(row.shots_remaining);
 
     player.created = row.created;
     player.updated = row.updated;
