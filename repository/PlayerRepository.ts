@@ -32,7 +32,7 @@ export default class PlayerRepository implements InterfaceRepository {
 
     promises.push(this.mysqlClient.execute(
       `SELECT COUNT(player.uuid) AS total FROM player WHERE player.server = UNHEX(REPLACE(?, '-', ''))`,
-      [server]
+      [server],
     ));
 
     const data = await Promise.all(promises);

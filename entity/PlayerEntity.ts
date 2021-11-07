@@ -1,6 +1,6 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 
-interface Consumable {
+export interface Consumable {
   sips: number | undefined;
   shots: number | undefined;
 }

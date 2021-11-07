@@ -20,11 +20,11 @@ export default class PlayerController implements InterfaceController {
   async getCollection(
     { response, request, state }: {
       response: Response;
-      request: Request,
+      request: Request;
       state: State;
     },
   ) {
-    const server = request.url.searchParams.get('server');
+    const server = request.url.searchParams.get("server");
     const offset = state.offset;
     const limit = state.limit;
 
