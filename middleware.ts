@@ -7,10 +7,10 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
 initializeEnv([
-  "SLURP_SERVER_JWT_SECRET",
+  "JWT_SECRET",
 ]);
 
-const secret = Deno.env.get("SLURP_SERVER_JWT_SECRET");
+const secret = Deno.env.get("JWT_SECRET");
 const encoder = new TextEncoder();
 const encoded = encoder.encode(secret!);
 

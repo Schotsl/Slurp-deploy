@@ -1,6 +1,6 @@
 import { Router } from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
-import mysqlClient from "../database.ts";
+import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
 import ServerController from "../controller/ServerController.ts";
 
 const serverController = new ServerController(mysqlClient);

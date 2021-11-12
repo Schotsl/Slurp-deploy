@@ -4,7 +4,7 @@ import {
   errorHandler,
   limitHandler,
   postHandler,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/middleware.ts";
+} from "../Uberdeno/middleware.ts";
 
 import graphRouter from "./router/graphRouter.ts";
 import entryRouter from "./router/entryRouter.ts";
