@@ -30,10 +30,14 @@ export default class GraphMapper implements InterfaceMapper {
       }
 
       const hour = row.hour;
-      const taken = { sips: row.sips_taken, shots: row.shots_taken };
+      const taken = {
+        sips: parseInt(row.sips_taken), 
+        shots: parseInt(row.shots_taken)
+      };
+      
       const remaining = {
-        sips: row.sips_remaining,
-        shots: row.shots_remaining,
+        sips: parseInt(row.sips_remaining),
+        shots: parseInt(row.shots_remaining),
       };
 
       graph.timeline.push({ hour, taken, remaining });
