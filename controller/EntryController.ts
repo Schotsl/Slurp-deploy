@@ -1,4 +1,6 @@
+import { red } from "https://deno.land/std@0.110.0/fmt/colors.ts";
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import {
   validateBoolean,
   validateTinyint,
@@ -9,9 +11,6 @@ import {
   Response,
   State,
 } from "https://deno.land/x/oak@v9.0.1/mod.ts";
-import {
-  MissingImplementation,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
 import EntryEntity from "../entity/EntryEntity.ts";
 import EntryRepository from "../repository/EntryRepository.ts";
@@ -78,7 +77,8 @@ export default class EntryController implements InterfaceController {
     validateBoolean(value.giveable, "giveable", true);
 
     if (value.sips > 0 || value.shots > 0) {
-      fetch("http://localhost:3000/hue/group", { method: "post" });
+      fetch("http://localhost:3000/hue/group", { method: "post" })
+        .catch(() => console.log(red(`Couldn't alert lights`)));
     }
 
     const entry = new EntryEntity();

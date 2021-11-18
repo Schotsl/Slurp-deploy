@@ -15,11 +15,18 @@ export default class GraphRepository implements InterfaceRepository {
     this.serverMapper = new GraphMapper();
   }
 
-  public async getCollection(): Promise<GraphCollection> {
+  // Change this too object instead of parameters so we can exclude limit and offset
+
+  public async getCollection(
+    _offset: number,
+    _limit: number,
+    server: string,
+  ): Promise<GraphCollection> {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(entry.player) as uuid, HEX(entry.server) as server, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) AS shots_taken, SUM(entry.shots) AS shots_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) AS sips_taken, SUM(entry.sips) AS sips_remaining, HOUR(entry.created) as hour FROM entry WHERE DATE_SUB(entry.created, INTERVAL 1 HOUR) GROUP BY HOUR(entry.created), entry.player, entry.server`,
+      `SELECT HEX(entry.player) as uuid, HEX(entry.server) as server, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) AS shots_taken, SUM(entry.shots) AS shots_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) AS sips_taken, SUM(entry.sips) AS sips_remaining, HOUR(entry.created) as hour FROM entry WHERE DATE_SUB(entry.created, INTERVAL 1 HOUR) AND enter.server = UNHEX(REPLACE(?, '-', '')) GROUP BY HOUR(entry.created), entry.player, entry.server`,
+      [server],
     ));
 
     const data = await Promise.all(promises);

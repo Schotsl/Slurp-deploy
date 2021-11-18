@@ -1,6 +1,11 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { Response } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
 import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import {
+  Request,
+  Response,
+  State,
+} from "https://deno.land/x/oak@v9.0.1/mod.ts";
 
 import GraphRepository from "../repository/GraphRepository.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
@@ -13,11 +18,23 @@ export default class GraphController implements InterfaceController {
   }
 
   async getCollection(
-    { response }: {
+    { response, request, state }: {
       response: Response;
+      request: Request;
+      state: State;
     },
   ) {
-    response.body = await this.graphRepository.getCollection();
+    const server = request.url.searchParams.get(`server`);
+    const offset = state.offset;
+    const limit = state.limit;
+
+    validateUUID(server, "server");
+
+    response.body = await this.graphRepository.getCollection(
+      offset,
+      limit,
+      server!,
+    );
   }
 
   removeObject() {
