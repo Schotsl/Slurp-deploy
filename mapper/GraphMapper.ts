@@ -5,30 +5,43 @@ import GraphCollection from "../collection/GraphCollection.ts";
 import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/mapper/InterfaceMapper.ts";
 
 export default class GraphMapper implements InterfaceMapper {
-  public mapObject(row: Record<string, never>): GraphEntity {
+  public async mapObject(row: Record<string, never>): Promise<GraphEntity> {
     const uuid = restoreUUID(row.uuid);
     const entry = new GraphEntity(uuid);
+    const response = await fetch(
+      `https://api.mojang.com/user/profiles/${uuid}/names`,
+    );
+
+    // Get the latest name object from a sorted list of username history
+    const parsed = await response.json();
+    const user = parsed[parsed.length - 1];
 
     entry.server = restoreUUID(row.server);
+    entry.username = user.name;
 
     return entry;
   }
 
-  public mapArray(
+  public async mapArray(
     rows: Record<string, never>[],
-  ): GraphEntity[] {
+  ): Promise<GraphEntity[]> {
     // TODO: This function could probably be rewritten
 
-    const graphs: GraphEntity[] = [];
+    const found: string[] = [];
+    const users = await Promise.all(
+      rows.filter((row) => {
+        if (!found.includes(row.uuid)) {
+          found.push(row.uuid);
+          return row;
+        }
+      }).map(async (row) => {
+        return await this.mapObject(row);
+      }),
+    );
 
     rows.forEach((row) => {
-      let graph = graphs.find((graph) => graph.uuid === restoreUUID(row.uuid));
-
-      if (typeof graph === "undefined") {
-        graph = this.mapObject(row);
-        graphs.push(graph);
-      }
-
+      const index = found.findIndex((uuid) => uuid === row.uuid);
+      const user = users[index]!;
       const hour = row.hour;
       const taken = {
         sips: parseInt(row.sips_taken),
@@ -40,19 +53,19 @@ export default class GraphMapper implements InterfaceMapper {
         shots: parseInt(row.shots_remaining),
       };
 
-      graph.timeline.push({ hour, taken, remaining });
+      user.timeline.push({ hour, taken, remaining });
     });
 
-    return graphs;
+    return users;
   }
 
-  public mapCollection(
+  public async mapCollection(
     rows: Record<string, never>[],
     offset: number,
     limit: number,
     total: number,
-  ): GraphCollection {
-    const players = this.mapArray(rows);
+  ): Promise<GraphCollection> {
+    const players = await this.mapArray(rows);
 
     return {
       total,

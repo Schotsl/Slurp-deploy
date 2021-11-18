@@ -32,7 +32,7 @@ export default class GraphRepository implements InterfaceRepository {
     const data = await Promise.all(promises);
     const rows = data[0].rows!;
 
-    return this.serverMapper.mapCollection(rows, -1, -1, -1);
+    return await this.serverMapper.mapCollection(rows, -1, -1, -1);
   }
 
   public updateObject(): Promise<GraphEntity> {

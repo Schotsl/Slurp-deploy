@@ -10,5 +10,6 @@ interface Timeslice {
 
 export default class GraphEntity extends BareEntity {
   public server: string | undefined;
+  public username: string | undefined;
   public timeline: Timeslice[] = [];
 }
