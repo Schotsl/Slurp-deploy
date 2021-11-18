@@ -6,6 +6,6 @@ export default class EntryEntity extends BaseEntity {
 
   public sips: number | undefined;
   public shots: number | undefined;
-  
+
   public giveable: boolean | undefined;
 }

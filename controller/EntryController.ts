@@ -78,7 +78,7 @@ export default class EntryController implements InterfaceController {
     validateBoolean(value.giveable, "giveable", true);
 
     if (value.sips > 0 || value.shots > 0) {
-      fetch('http://localhost:3000/hue/group', { method: 'post' });
+      fetch("http://localhost:3000/hue/group", { method: "post" });
     }
 
     const entry = new EntryEntity();

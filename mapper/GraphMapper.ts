@@ -31,10 +31,10 @@ export default class GraphMapper implements InterfaceMapper {
 
       const hour = row.hour;
       const taken = {
-        sips: parseInt(row.sips_taken), 
-        shots: parseInt(row.shots_taken)
+        sips: parseInt(row.sips_taken),
+        shots: parseInt(row.shots_taken),
       };
-      
+
       const remaining = {
         sips: parseInt(row.sips_remaining),
         shots: parseInt(row.shots_remaining),

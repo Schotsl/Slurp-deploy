@@ -18,7 +18,7 @@ export default class PlayerController implements InterfaceController {
   }
 
   async getCollection(
-    { response, request, state }: {
+    { response, state }: {
       response: Response;
       request: Request;
       state: State;

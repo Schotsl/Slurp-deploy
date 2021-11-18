@@ -30,7 +30,7 @@ export default class ServerController implements InterfaceController {
     response.body = await this.serverRepository.getCollection(
       offset,
       limit,
-      server
+      server,
     );
   }
 

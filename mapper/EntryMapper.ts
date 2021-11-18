@@ -15,7 +15,7 @@ export default class EntryMapper implements InterfaceMapper {
     entry.sips = row.sips;
     entry.shots = row.shots;
     entry.giveable = row.giveable === 1;
-    
+
     entry.created = row.created;
 
     return entry;
