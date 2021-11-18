@@ -60,8 +60,10 @@ export default class EntryController implements InterfaceController {
     value.server = state.uuid;
 
     validateUUID(value.player, "player", true);
+
     validateTinyint(value.sips, "sips", true);
     validateTinyint(value.shots, "shots", true);
+    validateTinyint(value.giveable, "giveable", true);
 
     const entry = new EntryEntity(params.uuid);
     Object.assign(entry, value);
@@ -83,8 +85,10 @@ export default class EntryController implements InterfaceController {
     value.server = state.uuid;
 
     validateUUID(value.player, "player");
+
     validateTinyint(value.sips, "sips", true);
     validateTinyint(value.shots, "shots", true);
+    validateTinyint(value.giveable, "giveable", true);
 
     if (value.sips > 0 || value.shots > 0) {
       fetch('http://localhost:3000/hue/group', { method: 'post' });
