@@ -4,7 +4,8 @@ export default class EntryEntity extends BaseEntity {
   public server: string | undefined;
   public player: string | undefined;
 
-  public giveable: number | undefined;
-  public shots: number | undefined;
   public sips: number | undefined;
+  public shots: number | undefined;
+  
+  public giveable: boolean | undefined;
 }

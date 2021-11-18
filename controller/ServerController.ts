@@ -23,9 +23,14 @@ export default class ServerController implements InterfaceController {
       state: State;
     },
   ) {
+    const offset = state.offset;
+    const server = state.uuid;
+    const limit = state.limit;
+
     response.body = await this.serverRepository.getCollection(
-      state.offset,
-      state.limit,
+      offset,
+      limit,
+      server
     );
   }
 

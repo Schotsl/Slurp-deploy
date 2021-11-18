@@ -18,12 +18,13 @@ export default class ServerRepository implements InterfaceRepository {
   public async getCollection(
     offset: number,
     limit: number,
+    server: string,
   ): Promise<ServerCollection> {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(server.uuid) AS uuid, server.created, server.updated FROM server ORDER BY server.created DESC LIMIT ? OFFSET ?`,
-      [limit, offset],
+      `SELECT HEX(server.uuid) AS uuid, server.created, server.updated FROM server WHERE server.uuid = UNHEX(REPLACE(?, '-', '')) ORDER BY server.created DESC LIMIT ? OFFSET ?`,
+      [server, limit, offset],
     ));
 
     promises.push(this.mysqlClient.execute(

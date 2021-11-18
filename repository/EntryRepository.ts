@@ -1,5 +1,6 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import {
+  MissingImplementation,
   DuplicateResource,
   MissingResource,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
@@ -21,12 +22,13 @@ export default class EntryRepository implements InterfaceRepository {
   public async getCollection(
     offset: number,
     limit: number,
+    server: string,
   ): Promise<EntryCollection> {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, HEX(entry.server) AS server, entry.shots, entry.sips, entry.giveable, entry.created, entry.updated FROM entry ORDER BY entry.created DESC LIMIT ? OFFSET ?`,
-      [limit, offset],
+      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, HEX(entry.server) AS server, entry.shots, entry.sips, entry.giveable, entry.created FROM entry WHERE entry.server = UNHEX(REPLACE(?, '-', '')) ORDER BY entry.created DESC LIMIT ? OFFSET ?`,
+      [server, limit, offset],
     ));
 
     promises.push(this.mysqlClient.execute(
@@ -40,40 +42,8 @@ export default class EntryRepository implements InterfaceRepository {
     return this.entryMapper.mapCollection(rows, offset, limit, total);
   }
 
-  public async updateObject(
-    object: Partial<EntryEntity>,
-  ): Promise<EntryEntity> {
-    const values = [];
-    const exclude = ["created", "updated", "uuid", "player", "server"];
-
-    let query = "UPDATE entry SET";
-
-    for (const [key, value] of Object.entries(object)) {
-      if (value !== null && !exclude.includes(key)) {
-        query += ` ${key}=?,`;
-        values.push(value);
-      }
-    }
-
-    if (object.player !== null) {
-      query += ` player=UNHEX(REPLACE(?, '-', '')),`;
-      values.push(object.player);
-    }
-
-    if (object.server !== null) {
-      query += ` server=UNHEX(REPLACE(?, '-', '')),`;
-      values.push(object.server);
-    }
-
-    if (values.length > 0) {
-      query = query.slice(0, -1);
-      query += " WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))";
-
-      await this.mysqlClient.execute(query, [...values, object.uuid]);
-    }
-
-    const data = await this.getObject(object.uuid!);
-    return data!;
+  public updateObject(): Promise<EntryEntity> {
+    throw new MissingImplementation();
   }
 
   public async removeObject(uuid: string, server: string): Promise<void> {
@@ -119,7 +89,7 @@ export default class EntryRepository implements InterfaceRepository {
 
   public async getObject(uuid: string): Promise<EntryEntity> {
     const data = await this.mysqlClient.execute(
-      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, HEX(entry.server) AS server, shots, sips, giveable, entry.created, entry.updated FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))`,
+      `SELECT HEX(entry.uuid) AS uuid, HEX(entry.player) AS player, HEX(entry.server) AS server, shots, sips, giveable, entry.created FROM entry WHERE entry.uuid = UNHEX(REPLACE(?, '-', ''))`,
       [uuid],
     );
 
