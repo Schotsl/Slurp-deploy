@@ -86,6 +86,10 @@ export default class EntryController implements InterfaceController {
     validateTinyint(value.sips, "sips", true);
     validateTinyint(value.shots, "shots", true);
 
+    if (value.sips > 0 || value.shots > 0) {
+      fetch('http://localhost:3000/hue/group', { method: 'post' });
+    }
+
     const entry = new EntryEntity();
     Object.assign(entry, value);
 
