@@ -24,16 +24,14 @@ export default class PlayerController implements InterfaceController {
       state: State;
     },
   ) {
-    const server = request.url.searchParams.get("server");
     const offset = state.offset;
+    const server = state.uuid;
     const limit = state.limit;
-
-    validateUUID(server, "server");
 
     response.body = await this.playerRepository.getCollection(
       offset,
       limit,
-      server!,
+      server,
     );
   }
 

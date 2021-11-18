@@ -17,4 +17,9 @@ export default class PlayerEntity extends BaseEntity {
     sips: undefined,
     shots: undefined,
   };
+
+  public giveable: Consumable = {
+    sips: undefined,
+    shots: undefined,
+  };
 }

@@ -90,13 +90,15 @@ export default class EntryRepository implements InterfaceRepository {
   public async addObject(object: EntryEntity): Promise<EntryEntity> {
     const sips = object.sips ? object.sips : 0;
     const shots = object.shots ? object.shots : 0;
+    const giveable = object.giveable ? object.giveable : 0;
 
     await this.mysqlClient.execute(
-      `INSERT INTO entry (uuid, player, server, shots, sips, giveable) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), ?, ?, ?)`,
+      `INSERT INTO entry (uuid, player, server, giveable, shots, sips) VALUES(UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), UNHEX(REPLACE(?, '-', '')), ?, ?, ?)`,
       [
         object.uuid,
         object.player,
         object.server,
+        giveable,
         shots,
         sips,
       ],
