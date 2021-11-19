@@ -1,5 +1,6 @@
 import { restoreUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
+import ColorHash from "https://deno.land/x/color_hash@v2.0.0/mod.ts"
 import PlayerEntity from "../entity/PlayerEntity.ts";
 import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/mapper/InterfaceMapper.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
@@ -7,6 +8,7 @@ import PlayerCollection from "../collection/PlayerCollection.ts";
 export default class PlayerMapper implements InterfaceMapper {
   public async mapObject(row: Record<string, never>): Promise<PlayerEntity> {
     const uuid = restoreUUID(row.uuid);
+    const hasher = new ColorHash();
     const player = new PlayerEntity(uuid);
     const response = await fetch(
       `https://api.mojang.com/user/profiles/${uuid}/names`,
@@ -16,6 +18,7 @@ export default class PlayerMapper implements InterfaceMapper {
     const parsed = await response.json();
     const user = parsed[parsed.length - 1];
 
+    player.color = hasher.hex(uuid);
     player.server = restoreUUID(row.server);
     player.username = user.name;
 

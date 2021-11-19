@@ -6,6 +6,7 @@ export interface Consumable {
 }
 
 export default class PlayerEntity extends BaseEntity {
+  public color: string | undefined;
   public server: string | undefined;
   public username: string | undefined;
 
