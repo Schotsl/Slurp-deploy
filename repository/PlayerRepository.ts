@@ -29,7 +29,7 @@ export default class PlayerRepository implements InterfaceRepository {
       `SELECT HEX(player.uuid) AS uuid, HEX(player.server) AS server, player.created, player.updated, IFNULL(sips_taken, 0) AS sips_taken, IFNULL(shots_taken, 0) AS shots_taken, IFNULL(sips_giveable, 0) AS sips_giveable, IFNULL(sips_remaining, 0) AS sips_remaining, IFNULL(shots_giveable, 0) AS shots_giveable, IFNULL(shots_remaining, 0) AS shots_remaining FROM player LEFT JOIN ( SELECT entry.player, SUM(CASE WHEN entry.giveable = 1 THEN entry.sips ELSE 0 END) AS sips_giveable, SUM(CASE WHEN entry.giveable = 1 THEN entry.shots ELSE 0 END) AS shots_giveable, SUM(CASE WHEN entry.giveable = 0 THEN entry.sips ELSE 0 END) AS sips_remaining, SUM(CASE WHEN entry.giveable = 0 THEN entry.shots ELSE 0 END) AS shots_remaining, -SUM(CASE WHEN entry.sips < 0 AND entry.giveable = 0 THEN entry.sips ELSE 0 END) as sips_taken, -SUM(CASE WHEN entry.shots < 0 AND entry.giveable = 0 THEN entry.shots ELSE 0 END) as shots_taken FROM entry WHERE entry.server = UNHEX(REPLACE(?, '-', '')) GROUP BY entry.player ) AS entry ON player.uuid = entry.player WHERE player.server = UNHEX(REPLACE(?, '-', '')) ORDER BY player.created DESC LIMIT ? OFFSET ?`,
       [server, server, limit, offset],
     ));
- 
+
     promises.push(this.mysqlClient.execute(
       `SELECT COUNT(player.uuid) AS total FROM player WHERE player.server = UNHEX(REPLACE(?, '-', ''))`,
       [server],
