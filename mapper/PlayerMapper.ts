@@ -1,6 +1,6 @@
 import { restoreUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
-import ColorHash from "https://deno.land/x/color_hash@v2.0.0/mod.ts"
+import ColorHash from "https://deno.land/x/color_hash@v2.0.0/mod.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/mapper/InterfaceMapper.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
