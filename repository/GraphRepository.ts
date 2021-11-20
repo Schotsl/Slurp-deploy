@@ -25,7 +25,7 @@ export default class GraphRepository implements InterfaceRepository {
     const promises = [];
 
     promises.push(this.mysqlClient.execute(
-      `SELECT HEX(entry.player) as uuid, HEX(entry.server) as server, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) AS shots_taken, SUM(entry.shots) AS shots_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) AS sips_taken, SUM(entry.sips) AS sips_remaining, CONCAT(HOUR(entry.created),":",LPAD(((MINUTE(entry.created) DIV 15)*15), 2, '0')) AS time FROM entry WHERE DATE_SUB(entry.created, INTERVAL 15 MINUTE) AND entry.server = UNHEX(REPLACE(?, '-','')) AND entry.giveable = 1 GROUP BY time, entry.player, entry.server`,
+      `SELECT HEX(entry.player) as uuid, HEX(entry.server) as server, -SUM(CASE WHEN entry.shots < 0 THEN entry.shots ELSE 0 END) AS shots_taken, SUM(entry.shots) AS shots_remaining, -SUM(CASE WHEN entry.sips < 0 THEN entry.sips ELSE 0 END) AS sips_taken, SUM(entry.sips) AS sips_remaining, CONCAT(HOUR(entry.created),":",LPAD(((MINUTE(entry.created) DIV 15)*15), 2, '0')) AS time FROM entry WHERE DATE_SUB(entry.created, INTERVAL 15 MINUTE) AND entry.server = UNHEX(REPLACE(?, '-','')) AND entry.giveable = 0 GROUP BY time, entry.player, entry.server`,
       [server],
     ));
 
