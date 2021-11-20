@@ -45,7 +45,7 @@ export default class GraphMapper implements InterfaceMapper {
     rows.forEach((row) => {
       const index = found.findIndex((uuid) => uuid === row.uuid);
       const user = users[index]!;
-      const hour = row.hour;
+      const time = row.time;
       const taken = {
         sips: parseInt(row.sips_taken),
         shots: parseInt(row.shots_taken),
@@ -56,7 +56,7 @@ export default class GraphMapper implements InterfaceMapper {
         shots: parseInt(row.shots_remaining),
       };
 
-      user.timeline.push({ hour, taken, remaining });
+      user.timeline.push({ time, taken, remaining });
     });
 
     return users;

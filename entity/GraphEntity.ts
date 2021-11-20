@@ -3,7 +3,7 @@ import BareEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/
 import { Consumable } from "./PlayerEntity.ts";
 
 interface Timeslice {
-  hour: string | undefined;
+  time: string;
   taken: Consumable;
   remaining: Consumable;
 }
