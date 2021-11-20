@@ -23,7 +23,7 @@ export default class PlayerMapper implements InterfaceMapper {
 
     player.color = hasher.hex(uuid);
     player.server = restoreUUID(row.server);
-    player.username = user.name;
+    player.username = response.status === 200 ? user.name : "Oops!";
 
     player.taken.sips = parseInt(row.sips_taken);
     player.taken.shots = parseInt(row.shots_taken);
