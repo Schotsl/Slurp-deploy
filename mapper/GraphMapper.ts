@@ -16,6 +16,7 @@ export default class GraphMapper implements InterfaceMapper {
 
     console.log(response.status);
     console.log(response.json());
+    
     // Get the latest name object from a sorted list of username history
     const parsed = await response.json();
     const user = parsed[parsed.length - 1];
