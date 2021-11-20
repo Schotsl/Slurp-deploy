@@ -14,9 +14,6 @@ export default class PlayerMapper implements InterfaceMapper {
       `https://api.mojang.com/user/profiles/${uuid}/names`,
     );
 
-    console.log(response.status);
-    console.log(response.json());
-
     // Get the latest name object from a sorted list of username history
     const parsed = await response.json();
     const user = parsed[parsed.length - 1];
