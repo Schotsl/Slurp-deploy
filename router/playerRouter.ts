@@ -1,4 +1,4 @@
-import { Router } from "https://deno.land/x/oak@v9.0.1/mod.ts";
+import { Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
 import { authenticationHandler } from "../middleware.ts";
 
 import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";

@@ -4,7 +4,7 @@ import {
   Request,
   Response,
   State,
-} from "https://deno.land/x/oak@v9.0.1/mod.ts";
+} from "https://deno.land/x/oak@v10.0.0/mod.ts";
 
 import ServerEntity from "../entity/ServerEntity.ts";
 import ServerRepository from "../repository/ServerRepository.ts";
