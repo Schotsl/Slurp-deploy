@@ -12,5 +12,7 @@ export default class EntryEntity extends BaseEntity {
 
   public sips = new SmallColumn("sips", true);
   public shots = new SmallColumn("shots", true);
+
   public giveable = new BooleanColumn("giveable", true);
+  public transfer = new BooleanColumn("transfer", true);
 }
