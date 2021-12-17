@@ -1,5 +1,5 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { ColumnInfo } from "../../Uberdeno/types.ts";
+import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/types.ts";
 import {
   Request,
   Response,
@@ -9,10 +9,10 @@ import {
   generateColumns,
   populateInstance,
   renderREST,
-} from "../../Uberdeno/helper.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
-import InterfaceController from "../../Uberdeno/controller/InterfaceController.ts";
-import GeneralRepository from "../../Uberdeno/repository/GeneralRepository.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
