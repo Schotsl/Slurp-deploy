@@ -1,89 +1,95 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation.ts";
+import { ColumnInfo } from "../../Uberdeno/types.ts";
+import { CustomError } from "../../Uberdeno/errors.ts";
+import { validateUUID } from "../../Uberdeno/validation/string.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v10.0.0/mod.ts";
+import {
+  generateColumns,
+  populateInstance,
+  renderREST,
+} from "../../Uberdeno/helper.ts";
 
+import InterfaceController from "../../Uberdeno/controller/InterfaceController.ts";
+import GeneralRepository from "../../Uberdeno/repository/GeneralRepository.ts";
+import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
-import PlayerRepository from "../repository/PlayerRepository.ts";
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
-export default class PlayerController implements InterfaceController {
-  private playerRepository: PlayerRepository;
+export default class GeneralController implements InterfaceController {
+  private generalColumns: ColumnInfo[] = [];
+  private generalRepository: GeneralRepository;
 
-  constructor(mysqlClient: Client) {
-    this.playerRepository = new PlayerRepository(mysqlClient);
+  constructor(mysqlClient: Client, name: string) {
+    this.generalColumns = generateColumns(PlayerEntity);
+    this.generalRepository = new GeneralRepository(
+      mysqlClient,
+      name,
+      PlayerEntity,
+      PlayerCollection,
+    );
   }
 
   async getCollection(
     { response, state }: {
       response: Response;
-      request: Request;
       state: State;
     },
   ) {
-    const offset = state.offset;
-    const server = state.uuid;
-    const limit = state.limit;
+    const { offset, limit } = state;
 
-    response.body = await this.playerRepository.getCollection(
-      offset,
-      limit,
-      server,
-    );
+    const result = await this.generalRepository.getCollection(offset, limit);
+    const parsed = renderREST(result);
+
+    response.body = parsed;
   }
 
   async removeObject(
-    { response, params, state }: {
-      response: Response;
+    { params, response }: {
       request: Request;
       params: { uuid: string };
-      state: State;
+      response: Response;
     },
   ) {
-    await this.playerRepository.removeObject(params.uuid, state.uuid);
+    const uuid = params.uuid;
+    await this.generalRepository.removeObject(uuid);
 
     response.status = 204;
   }
 
-  async updateObject(
-    { response, request, params, state }: {
-      response: Response;
-      request: Request;
-      params: { uuid: string };
-      state: State;
-    },
-  ) {
-    const body = await request.body();
-    const value = await body.value;
-
-    value.server = state.uuid;
-
-    const player = new PlayerEntity(params.uuid);
-    Object.assign(player, value);
-
-    response.body = await this.playerRepository.updateObject(player);
-  }
-
   async addObject(
-    { response, request, state }: {
-      response: Response;
+    { request, response, state }: {
       request: Request;
+      response: Response;
       state: State;
     },
   ) {
     const body = await request.body();
     const value = await body.value;
-
-    value.server = state.uuid;
+    const object = new PlayerEntity();
 
     validateUUID(value.uuid, "uuid");
 
-    const player = new PlayerEntity();
-    Object.assign(player, value);
+    const endpoint = `https://api.mojang.com/user/profiles/${value.uuid}/names`;
+    const reaction = await fetch(endpoint);
 
-    response.body = await this.playerRepository.addObject(player);
+    if (reaction.status !== 200) {
+      throw new CustomError("No Mojang profile found with this UUID", 404);
+    }
+
+    const usernames = await reaction.json();
+    const username = usernames[usernames.length - 1].name;
+
+    value.username = username;
+    value.server = state.uuid;
+
+    populateInstance(value, this.generalColumns, object);
+
+    const result = await this.generalRepository.addObject(object);
+    const parsed = renderREST(result);
+
+    response.body = parsed;
   }
 }

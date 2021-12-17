@@ -1,36 +1,18 @@
 import { Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
 
-import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
 import ServerController from "../controller/ServerController.ts";
+import mysqlClient from "../../Uberdeno/connections/mysql.ts";
 
-import { authenticationHandler } from "../middleware.ts";
-
-const serverController = new ServerController(mysqlClient);
-const serverRouter = new Router({
-  prefix: "/v1/server",
-});
-
-serverRouter.get(
-  "/",
-  authenticationHandler,
-  serverController.getCollection.bind(serverController),
+const serverRouter = new Router({ prefix: "/v1/server" });
+const serverController = new ServerController(
+  mysqlClient,
+  "server",
 );
 
-serverRouter.post(
-  "/",
-  serverController.addObject.bind(serverController),
-);
+const get = serverController.getCollection.bind(serverController);
+const post = serverController.addObject.bind(serverController);
 
-serverRouter.put(
-  "/:uuid",
-  authenticationHandler,
-  serverController.updateObject.bind(serverController),
-);
-
-serverRouter.delete(
-  "/:uuid",
-  authenticationHandler,
-  serverController.removeObject.bind(serverController),
-);
+serverRouter.get("/", get);
+serverRouter.post("/", post);
 
 export default serverRouter;

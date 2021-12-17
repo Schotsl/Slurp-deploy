@@ -1,20 +1,34 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
+import { ColumnInfo } from "../../Uberdeno/types.ts";
 import { createToken } from "../middleware.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v10.0.0/mod.ts";
+import {
+  generateColumns,
+  populateInstance,
+  renderREST,
+} from "../../Uberdeno/helper.ts";
 
+import InterfaceController from "../../Uberdeno/controller/InterfaceController.ts";
+import GeneralRepository from "../../Uberdeno/repository/GeneralRepository.ts";
+import ServerCollection from "../collection/ServerCollection.ts";
 import ServerEntity from "../entity/ServerEntity.ts";
-import ServerRepository from "../repository/ServerRepository.ts";
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
-export default class ServerController implements InterfaceController {
-  private serverRepository: ServerRepository;
+export default class GeneralController implements InterfaceController {
+  private generalColumns: ColumnInfo[] = [];
+  private generalRepository: GeneralRepository;
 
-  constructor(mysqlClient: Client) {
-    this.serverRepository = new ServerRepository(mysqlClient);
+  constructor(mysqlClient: Client, name: string) {
+    this.generalColumns = generateColumns(ServerEntity);
+    this.generalRepository = new GeneralRepository(
+      mysqlClient,
+      name,
+      ServerEntity,
+      ServerCollection,
+    );
   }
 
   async getCollection(
@@ -23,65 +37,41 @@ export default class ServerController implements InterfaceController {
       state: State;
     },
   ) {
-    const offset = state.offset;
-    const server = state.uuid;
-    const limit = state.limit;
+    const { offset, limit } = state;
 
-    response.body = await this.serverRepository.getCollection(
-      offset,
-      limit,
-      server,
-    );
+    const result = await this.generalRepository.getCollection(offset, limit);
+    const parsed = renderREST(result);
+
+    response.body = parsed;
   }
 
   async removeObject(
-    { response, params }: {
-      response: Response;
+    { params, response }: {
       request: Request;
       params: { uuid: string };
+      response: Response;
     },
   ) {
-    await this.serverRepository.removeObject(params.uuid);
+    const uuid = params.uuid;
+    await this.generalRepository.removeObject(uuid);
 
     response.status = 204;
   }
 
-  async updateObject(
-    { response, request, params }: {
-      response: Response;
-      request: Request;
-      params: { uuid: string };
-    },
-  ) {
-    const body = await request.body();
-    const value = await body.value;
-
-    delete value.uuid;
-
-    // TODO: Prevent non existing properties from being copied
-
-    const server = new ServerEntity(params.uuid);
-    Object.assign(server, value);
-
-    response.body = await this.serverRepository.updateObject(server);
-  }
-
   async addObject(
-    { response, request }: {
-      response: Response;
-      request: Request;
-    },
+    { request, response }: { request: Request; response: Response },
   ) {
     const body = await request.body();
     const value = await body.value;
-
+    const object = new ServerEntity();
     delete value.uuid;
 
-    const server = new ServerEntity();
-    Object.assign(server, value);
+    populateInstance(value, this.generalColumns, object);
 
-    const fetched = await this.serverRepository.addObject(server);
-    fetched.token = await createToken(fetched.uuid);
-    response.body = fetched;
+    const result = await this.generalRepository.addObject(object);
+    const token = await createToken(result.uuid.getValue()!);
+    const parsed = renderREST({ ...result, token });
+
+    response.body = parsed;
   }
 }

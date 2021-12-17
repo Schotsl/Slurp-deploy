@@ -1,4 +1,6 @@
-import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
+import BaseEntity from "../../Uberdeno/entity/BaseEntity.ts";
+
+import { UUIDColumn, VarcharColumn } from "../../Uberdeno/other/Columns.ts";
 
 export interface Consumable {
   sips: number | undefined;
@@ -6,9 +8,8 @@ export interface Consumable {
 }
 
 export default class PlayerEntity extends BaseEntity {
-  public color: string | undefined;
-  public server: string | undefined;
-  public username: string | undefined;
+  public server = new UUIDColumn("server", true);
+  public username = new VarcharColumn("name", true);
 
   public taken: Consumable = {
     sips: undefined,

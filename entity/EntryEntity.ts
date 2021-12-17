@@ -1,11 +1,16 @@
-import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
+import BaseEntity from "../../Uberdeno/entity/BaseEntity.ts";
+
+import {
+  BooleanColumn,
+  SmallColumn,
+  UUIDColumn,
+} from "../../Uberdeno/other/Columns.ts";
 
 export default class EntryEntity extends BaseEntity {
-  public server: string | undefined;
-  public player: string | undefined;
+  public server = new UUIDColumn("server", true);
+  public player = new UUIDColumn("player", true);
 
-  public sips: number | undefined;
-  public shots: number | undefined;
-
-  public giveable: boolean | undefined;
+  public sips = new SmallColumn("sips", true);
+  public shots = new SmallColumn("shots", true);
+  public giveable = new BooleanColumn("giveable", true);
 }

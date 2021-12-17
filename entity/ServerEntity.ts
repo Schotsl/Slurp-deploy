@@ -1,5 +1,3 @@
-import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
+import BaseEntity from "../../Uberdeno/entity/BaseEntity.ts";
 
-export default class ServerEntity extends BaseEntity {
-  token?: string;
-}
+export default class PlayerEntity extends BaseEntity {}
