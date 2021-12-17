@@ -10,9 +10,9 @@ export default class EntryEntity extends BaseEntity {
   public server = new UUIDColumn("server", true);
   public player = new UUIDColumn("player", true);
 
-  public sips = new SmallColumn("sips", true);
-  public shots = new SmallColumn("shots", true);
+  public sips = new SmallColumn("sips", true, 0);
+  public shots = new SmallColumn("shots", true, 0);
 
-  public giveable = new BooleanColumn("giveable", true);
-  public transfer = new BooleanColumn("transfer", true);
+  public giveable = new BooleanColumn("giveable", true, false);
+  public transfer = new BooleanColumn("transfer", true, false);
 }
