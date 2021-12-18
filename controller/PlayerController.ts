@@ -1,7 +1,7 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/types.ts";
-import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
-import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation/string.ts";
+import { ColumnInfo } from "../../Uberdeno/types.ts";
+import { CustomError } from "../../Uberdeno/errors.ts";
+import { validateUUID } from "../../Uberdeno/validation/string.ts";
 import {
   Request,
   Response,
@@ -11,10 +11,10 @@ import {
   generateColumns,
   populateInstance,
   renderREST,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
+} from "../../Uberdeno/helper.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import InterfaceController from "../../Uberdeno/controller/InterfaceController.ts";
+import GeneralRepository from "../../Uberdeno/repository/GeneralRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 
@@ -76,7 +76,7 @@ export default class GeneralController implements InterfaceController {
     const reaction = await fetch(endpoint);
 
     if (reaction.status !== 200) {
-      throw new CustomError("No Mojang profile found with this UUID", 404);
+      throw new CustomError("No Mojang profile found with this UUID.", 404);
     }
 
     const usernames = await reaction.json();

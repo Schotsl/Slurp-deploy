@@ -1,9 +1,6 @@
-import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
+import BaseEntity from "../../Uberdeno/entity/BaseEntity.ts";
 
-import {
-  UUIDColumn,
-  VarcharColumn,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
+import { UUIDColumn, VarcharColumn } from "../../Uberdeno/other/Columns.ts";
 
 export interface Consumable {
   sips: number | undefined;
