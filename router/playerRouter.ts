@@ -1,5 +1,4 @@
 import { Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
-import { authenticationHandler } from "../middleware.ts";
 
 import PlayerController from "../controller/PlayerController.ts";
 import mysqlClient from "../../Uberdeno/connections/mysql.ts";

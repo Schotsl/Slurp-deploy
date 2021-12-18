@@ -3,10 +3,10 @@ import { verifyToken } from "./middleware.ts";
 import { restoreUUID } from "../Uberdeno/helper.ts";
 
 interface Summary {
-  uuid: string,
-  sips: string,
-  shots: string,
-  username: string,
+  uuid: string;
+  sips: string;
+  shots: string;
+  username: string;
 }
 
 interface Server {
@@ -87,22 +87,25 @@ class Manager {
 
     if (typeof server !== "undefined") {
       server.todo = todo;
-      
+
       this.sendUpdate(server);
     }
   }
 
   sendUpdate(server: Server) {
-    const { taken, todo} = server;
+    const { taken, todo } = server;
     const body = JSON.stringify({ taken, todo });
-    
+
     server.clients.forEach((client) => {
       client.send(body);
-    })
+    });
   }
 
   async getTodo(uuid: string): Promise<Summary[]> {
-    const result = await mysqlClient.execute(`SELECT HEX(player.uuid) AS uuid, player.username, SUM(entry.sips) AS sips, SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND (entry.sips > 0 OR entry.shots > 0) GROUP BY entry.player`, [uuid]);
+    const result = await mysqlClient.execute(
+      `SELECT HEX(player.uuid) AS uuid, player.username, SUM(entry.sips) AS sips, SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND (entry.sips > 0 OR entry.shots > 0) GROUP BY entry.player`,
+      [uuid],
+    );
     return result.rows!.map((row) => {
       const uuid = restoreUUID(row.uuid);
       return { ...row, uuid };
@@ -110,7 +113,10 @@ class Manager {
   }
 
   async getTaken(uuid: string): Promise<Summary[]> {
-    const result = await mysqlClient.execute(`SELECT HEX(player.uuid) AS uuid, player.username, -SUM(entry.sips) AS sips, -SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND entry.transfer = 0 AND (entry.sips < 0 OR entry.shots < 0) GROUP BY entry.player`, [uuid]);
+    const result = await mysqlClient.execute(
+      `SELECT HEX(player.uuid) AS uuid, player.username, -SUM(entry.sips) AS sips, -SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND entry.transfer = 0 AND (entry.sips < 0 OR entry.shots < 0) GROUP BY entry.player`,
+      [uuid],
+    );
     return result.rows!.map((row) => {
       const uuid = restoreUUID(row.uuid);
       return { ...row, uuid };
