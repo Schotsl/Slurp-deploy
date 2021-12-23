@@ -13,10 +13,13 @@ import manager from "../manager.ts";
 const get = playerController.getCollection.bind(playerController);
 const post = playerController.addObject.bind(playerController);
 const remove = playerController.removeObject.bind(playerController);
+const object = playerController.getObject.bind(playerController);
 
 // playerRouter.use(authenticationHandler);
 
 playerRouter.get("/", get);
+playerRouter.get("/:uuid", object);
+
 playerRouter.post("/", post);
 playerRouter.delete("/:uuid", remove);
 

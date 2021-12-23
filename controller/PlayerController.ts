@@ -32,6 +32,20 @@ export default class GeneralController implements InterfaceController {
     );
   }
 
+  async getObject(
+    { params, response }: {
+      request: Request;
+      params: { uuid: string };
+      response: Response;
+    },
+  ) {
+    const uuid = params.uuid;
+    const result = await this.generalRepository.getObject(uuid);
+    const parsed = renderREST(result);
+
+    response.body = parsed;
+  }
+
   async getCollection(
     { response, state }: {
       response: Response;
