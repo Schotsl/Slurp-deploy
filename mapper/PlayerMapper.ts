@@ -1,5 +1,8 @@
 import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/types.ts";
-import { generateColumns, populateInstance } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
+import {
+  generateColumns,
+  populateInstance,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
 import PlayerEntity from "../entity/PlayerEntity.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
