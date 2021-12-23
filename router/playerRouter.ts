@@ -27,14 +27,6 @@ playerRouter.get("/ws", async (ctx) => {
 
   const socket = await ctx.upgrade();
   manager.addClient(socket);
-  // socket.onopen = () => {
-  //   console.log("Websocket on open!");
-  //   socket.send("Hey! This is a websocket!");
-  // };
-
-  // socket.onmessage = (msg) => {
-  //   console.log("MSG:", msg);
-  // };
 });
 
 export default playerRouter;
