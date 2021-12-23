@@ -14,17 +14,17 @@ import {
 } from "../../Uberdeno/helper.ts";
 
 import InterfaceController from "../../Uberdeno/controller/InterfaceController.ts";
-import GeneralRepository from "../../Uberdeno/repository/GeneralRepository.ts";
+import PlayerRepository from "../repository/PlayerRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 
 export default class GeneralController implements InterfaceController {
   private generalColumns: ColumnInfo[] = [];
-  private generalRepository: GeneralRepository;
+  private generalRepository: PlayerRepository;
 
   constructor(mysqlClient: Client, name: string) {
     this.generalColumns = generateColumns(PlayerEntity);
-    this.generalRepository = new GeneralRepository(
+    this.generalRepository = new PlayerRepository(
       mysqlClient,
       name,
       PlayerEntity,
