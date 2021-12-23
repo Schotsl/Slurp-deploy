@@ -1,15 +1,15 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { ColumnInfo } from "../../Uberdeno/types.ts";
-import { UUIDColumn } from "../../Uberdeno/other/Columns.ts";
-import { generateColumns } from "../../Uberdeno/helper.ts";
-import { MissingResource } from "../../Uberdeno/errors.ts";
+import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/types.ts";
+import { UUIDColumn } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
+import { generateColumns } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
+import { MissingResource } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
-import Querries from "../../Uberdeno/other/Querries.ts";
+import Querries from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Querries.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 import PlayerMapper from "../mapper/PlayerMapper.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
-import GeneralRepository from "../../Uberdeno/repository/GeneralRepository.ts";
-import InterfaceRepository from "../../Uberdeno/repository/InterfaceRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import InterfaceRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/InterfaceRepository.ts";
 
 export default class PlayerRepository implements InterfaceRepository {
   private generalName: string;

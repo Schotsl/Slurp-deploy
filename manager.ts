@@ -1,6 +1,6 @@
-import mysqlClient from "../Uberdeno/connections/mysql.ts";
+import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
 import { verifyToken } from "./middleware.ts";
-import { restoreUUID } from "../Uberdeno/helper.ts";
+import { restoreUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
 interface Summary {
   uuid: string;

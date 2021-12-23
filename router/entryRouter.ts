@@ -2,7 +2,7 @@ import { Router } from "https://deno.land/x/oak@v10.1.0/mod.ts";
 import { authenticationHandler } from "../middleware.ts";
 
 import EntryController from "../controller/EntryController.ts";
-import mysqlClient from "../../Uberdeno/connections/mysql.ts";
+import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
 
 const entryRouter = new Router({ prefix: "/v1/entry" });
 const entryController = new EntryController(

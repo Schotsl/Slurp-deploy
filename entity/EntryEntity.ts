@@ -1,10 +1,10 @@
-import BaseEntity from "../../Uberdeno/entity/BaseEntity.ts";
+import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 
 import {
   BooleanColumn,
   SmallColumn,
   UUIDColumn,
-} from "../../Uberdeno/other/Columns.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 
 export default class EntryEntity extends BaseEntity {
   public server = new UUIDColumn("server", true);

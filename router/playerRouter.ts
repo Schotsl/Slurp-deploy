@@ -1,7 +1,7 @@
 import { Router } from "https://deno.land/x/oak@v10.1.0/mod.ts";
 
 import PlayerController from "../controller/PlayerController.ts";
-import mysqlClient from "../../Uberdeno/connections/mysql.ts";
+import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/connections/mysql.ts";
 
 const playerRouter = new Router({ prefix: "/v1/player" });
 const playerController = new PlayerController(
