@@ -5,7 +5,7 @@ import {
   Request,
   Response,
   State,
-} from "https://deno.land/x/oak@v10.0.0/mod.ts";
+} from "https://deno.land/x/oak@v10.1.0/mod.ts";
 import {
   generateColumns,
   populateInstance,

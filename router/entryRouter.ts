@@ -1,4 +1,4 @@
-import { Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
+import { Router } from "https://deno.land/x/oak@v10.1.0/mod.ts";
 import { authenticationHandler } from "../middleware.ts";
 
 import EntryController from "../controller/EntryController.ts";
