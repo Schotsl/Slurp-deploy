@@ -15,7 +15,7 @@ const post = playerController.addObject.bind(playerController);
 const remove = playerController.removeObject.bind(playerController);
 const object = playerController.getObject.bind(playerController);
 
-// playerRouter.use(authenticationHandler);
+playerRouter.use(authenticationHandler);
 
 playerRouter.get("/", get);
 playerRouter.get("/:uuid", object);
