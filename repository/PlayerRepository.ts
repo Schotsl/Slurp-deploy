@@ -1,6 +1,5 @@
 import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
 import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/types.ts";
-import { UUIDColumn } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 import { generateColumns } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 import { MissingResource } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
