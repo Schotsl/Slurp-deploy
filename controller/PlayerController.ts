@@ -9,7 +9,7 @@ import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/
 import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation/string.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
-import GeneralController from "../../Uberdeno/controller/GeneralController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
