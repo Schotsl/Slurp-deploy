@@ -27,3 +27,5 @@ application.use(serverRouter.allowedMethods());
 application.use(playerRouter.allowedMethods());
 
 application.listen({ port: 8080 });
+
+console.log('lit');
