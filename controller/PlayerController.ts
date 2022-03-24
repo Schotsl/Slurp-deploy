@@ -9,7 +9,7 @@ import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/
 import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation/string.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
+import GeneralController from "../../Uberdeno/controller/GeneralController.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
@@ -74,8 +74,9 @@ export default class PlayerController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
+    const uuid = value.uuid!;
 
-    validateUUID(value.uuid, "uuid");
+    validateUUID(uuid, "uuid");
 
     const endpoint = `https://api.mojang.com/user/profiles/${value.uuid}/names`;
     const results = await fetch(endpoint);
@@ -90,6 +91,6 @@ export default class PlayerController implements InterfaceController {
     value.username = username;
     value.server = state.uuid;
 
-    await this.generalController.addObject({ request, response, value });
+    await this.generalController.addObject({ request, response, value, uuid });
   }
 }
