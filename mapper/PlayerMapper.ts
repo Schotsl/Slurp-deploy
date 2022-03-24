@@ -5,27 +5,19 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
 import PlayerEntity from "../entity/PlayerEntity.ts";
+import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/mapper/InterfaceMapper.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 
-import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/mapper/InterfaceMapper.ts";
-
 export default class GeneralMapper implements InterfaceMapper {
-  private Entity: { new (): PlayerEntity };
-
   private generalColumns: ColumnInfo[] = [];
 
-  constructor(
-    Entity: { new (): PlayerEntity },
-  ) {
-    this.Entity = Entity;
-
-    this.generalColumns = generateColumns(Entity);
+  constructor() {
+    this.generalColumns = generateColumns(PlayerEntity);
   }
 
   public mapObject(row: Record<string, never>): PlayerEntity {
-    const entity = new this.Entity();
+    const entity = new PlayerEntity();
 
-    // Transform strings and numbers into the column wrappers
     populateInstance(row, this.generalColumns, entity);
 
     entity.taken = {
@@ -49,7 +41,6 @@ export default class GeneralMapper implements InterfaceMapper {
   public mapArray(
     rows: Record<string, never>[],
   ): PlayerEntity[] {
-    // Map the rows into an array of entities
     const entries = rows.map((row) => this.mapObject(row));
     return entries;
   }

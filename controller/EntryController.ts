@@ -1,31 +1,23 @@
-import { Client } from "https://deno.land/x/mysql@v2.10.1/mod.ts";
-import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/types.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v10.1.0/mod.ts";
-import {
-  generateColumns,
-  populateInstance,
-  renderREST,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
-import manager from "../manager.ts";
+// import manager from "../manager.ts";
 
-export default class GeneralController implements InterfaceController {
-  private generalColumns: ColumnInfo[] = [];
-  private generalRepository: GeneralRepository;
+export default class EntryController implements InterfaceController {
+  private generalController: GeneralController;
 
-  constructor(mysqlClient: Client, name: string) {
-    this.generalColumns = generateColumns(EntryEntity);
-    this.generalRepository = new GeneralRepository(
-      mysqlClient,
+  constructor(
+    name: string,
+  ) {
+    this.generalController = new GeneralController(
       name,
       EntryEntity,
       EntryCollection,
@@ -38,25 +30,25 @@ export default class GeneralController implements InterfaceController {
       state: State;
     },
   ) {
-    const { offset, limit } = state;
+    await this.generalController.getCollection({ response, state });
+  }
 
-    const result = await this.generalRepository.getCollection(offset, limit);
-    const parsed = renderREST(result);
-
-    response.body = parsed;
+  async getObject(
+    { response, params }: {
+      response: Response;
+      params: { uuid: string };
+    },
+  ) {
+    await this.generalController.getObject({ response, params });
   }
 
   async removeObject(
-    { params, response }: {
-      request: Request;
-      params: { uuid: string };
+    { response, params }: {
       response: Response;
+      params: { uuid: string };
     },
   ) {
-    const uuid = params.uuid;
-    await this.generalRepository.removeObject(uuid);
-
-    response.status = 204;
+    await this.generalController.removeObject({ response, params });
   }
 
   async addObject(
@@ -68,19 +60,12 @@ export default class GeneralController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
-    const object = new EntryEntity();
-    delete value.uuid;
+    const server = state.uuid;
 
-    value.server = state.uuid;
+    value.server = server;
 
-    populateInstance(value, this.generalColumns, object);
+    await this.generalController.addObject({ request, response, value });
 
-    const result = await this.generalRepository.addObject(object);
-    const parsed = renderREST(result);
-
-    response.body = parsed;
-
-    if (parsed.shots > 0 || parsed.sips > 0) manager.updateTodo(parsed.server);
-    if (parsed.shots < 0 || parsed.sips < 0) manager.updateTaken(parsed.server);
+    // manager.updateTodo(server);
   }
 }
