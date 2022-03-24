@@ -50,7 +50,6 @@ export default class PlayerController implements InterfaceController {
     },
   ) {
     const uuid = params.uuid;
-
     const result = await this.playerRepository.getObject(uuid);
     const parsed = renderREST(result);
 
