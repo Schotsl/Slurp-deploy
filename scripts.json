@@ -16,7 +16,7 @@
   },
   "allow": {
     "env": "MYSQL_HOSTNAME,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_PORT,MYSQL_DATABASE,JWT_SECRET,DENO_DEPLOYMENT_ID",
-    "net": "db-mysql-ams3-57019-do-user-8895515-0.b.db.ondigitalocean.com:25060,0.0.0.0:8080",
+    "net": "aristotle-do-user-8895515-0.b.db.ondigitalocean.com:25060,0.0.0.0:8080",
     "read": ".env"
   },
   "logger": {
