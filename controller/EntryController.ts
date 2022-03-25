@@ -9,7 +9,7 @@ import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberden
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
-// import manager from "../manager.ts";
+import manager from "../manager.ts";
 
 export default class EntryController implements InterfaceController {
   private generalController: GeneralController;
@@ -66,6 +66,15 @@ export default class EntryController implements InterfaceController {
 
     await this.generalController.addObject({ request, response, value });
 
+    if (!value.giveable && (value.shots < 0 || value.sips < 0)) {
+      manager.updateTaken(server);
+      manager.updateGraph(server);
+      manager.updateRemaining(server);
+    }
+
+    if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
+      manager.updateRemaining(server);
+    }
     // manager.updateTodo(server);
   }
 }
