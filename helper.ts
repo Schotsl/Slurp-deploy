@@ -1,16 +1,16 @@
 export function generateColor(input: string) {
-  var hash = 0;
+  let hash = 0;
 
-  for (var i = 0; i < input.length; i++) {
+  for (let i = 0; i < input.length; i++) {
     hash = input.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  var colour = '#';
-  
-  for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    colour += ('00' + value.toString(16)).substr(-2);
+  let colour = "#";
+
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF;
+    colour += ("00" + value.toString(16)).substr(-2);
   }
-  
+
   return colour;
 }

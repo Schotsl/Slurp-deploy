@@ -68,8 +68,13 @@ export default class EntryController implements InterfaceController {
 
     await this.generalController.addObject({ request, response, value });
 
-    if (value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0) {
-      throw new CustomError("Both 'sips' and 'shots' should either be positive or negative", 400);
+    if (
+      value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0
+    ) {
+      throw new CustomError(
+        "Both 'sips' and 'shots' should either be positive or negative",
+        400,
+      );
     }
 
     if (!value.giveable && (value.shots < 0 || value.sips < 0)) {
@@ -80,7 +85,7 @@ export default class EntryController implements InterfaceController {
 
     if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
       helperClient.alert();
-      
+
       manager.updateRemaining(server);
     }
   }
