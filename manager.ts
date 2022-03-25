@@ -22,8 +22,8 @@ enum Fields {
   All = "all",
   Taken = "taken",
   Graphs = "gra",
-  Remaining = "re"
-} 
+  Remaining = "re",
+}
 
 class Manager {
   servers: Server[] = [];
@@ -87,7 +87,9 @@ class Manager {
   }
 
   updateClient(server: Server, field: Fields, client?: WebSocket) {
-    const data = field === Fields.All ? this.fetchAll(server) : this.fetchField(server, field);
+    const data = field === Fields.All
+      ? this.fetchAll(server)
+      : this.fetchField(server, field);
     const body = JSON.stringify(data);
 
     if (typeof client !== "undefined") {
@@ -97,16 +99,16 @@ class Manager {
 
     server.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-      client.send(body);
+        client.send(body);
       }
     });
   }
-  
+
   fetchAll(server: Server) {
     return {
       taken: server.taken,
       graphs: server.graphs,
-      remaining: server.remaining
+      remaining: server.remaining,
     };
   }
 
@@ -123,7 +125,6 @@ class Manager {
       return { graphs: server.graphs };
     }
   }
-
 
   // async updateTaken(uuid: string) {
   //   const server = this.servers.find((server) => server.uuid === uuid);
@@ -211,7 +212,7 @@ class Manager {
 
     if (typeof server !== "undefined") {
       const taken = await this.fetchTaken(uuid);
-      
+
       server.taken = taken;
 
       this.updateClient(server, Fields.Taken);
