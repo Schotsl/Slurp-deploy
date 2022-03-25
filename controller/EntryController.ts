@@ -1,3 +1,4 @@
+import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import {
   Request,
   Response,
@@ -65,6 +66,10 @@ export default class EntryController implements InterfaceController {
     value.server = server;
 
     await this.generalController.addObject({ request, response, value });
+
+    if (value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0) {
+      throw new CustomError("Both 'sips' and 'shots' should either be positive or negative", 400);
+    }
 
     if (!value.giveable && (value.shots < 0 || value.sips < 0)) {
       manager.updateTaken(server);
