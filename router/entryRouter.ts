@@ -9,10 +9,13 @@ const entryController = new EntryController("entry");
 const get = entryController.getCollection.bind(entryController);
 const post = entryController.addObject.bind(entryController);
 const remove = entryController.removeObject.bind(entryController);
+const object = entryController.getObject.bind(entryController);
 
 entryRouter.use(authenticationHandler);
 
 entryRouter.get("/", get);
+entryRouter.get("/:uuid", object);
+
 entryRouter.post("/", post);
 entryRouter.delete("/:uuid", remove);
 
