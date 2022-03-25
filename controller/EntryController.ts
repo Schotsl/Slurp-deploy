@@ -10,6 +10,7 @@ import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberden
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
+import helperClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/helperClient.ts";
 import manager from "../manager.ts";
 
 export default class EntryController implements InterfaceController {
@@ -78,8 +79,9 @@ export default class EntryController implements InterfaceController {
     }
 
     if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
+      helperClient.alert();
+      
       manager.updateRemaining(server);
     }
-    // manager.updateTodo(server);
   }
 }
