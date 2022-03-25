@@ -37,20 +37,24 @@ export default class PlayerController implements InterfaceController {
   ) {
     const { offset, limit } = state;
 
-    const result = await this.playerRepository.getCollection(offset, limit);
+    const server = state.uuid;
+    const result = await this.playerRepository.getCollection(offset, limit, server);
     const parsed = renderREST(result);
 
     response.body = parsed;
   }
 
   async getObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
     const uuid = params.uuid;
-    const result = await this.playerRepository.getObject(uuid);
+    const server = state.uuid;
+
+    const result = await this.playerRepository.getObject(uuid, server);
     const parsed = renderREST(result);
 
     response.body = parsed;
