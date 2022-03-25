@@ -7,6 +7,7 @@ import {
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation/string.ts";
+import { generateColor } from "../helper.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
@@ -98,6 +99,7 @@ export default class PlayerController implements InterfaceController {
 
     value.username = username;
     value.server = state.uuid;
+    value.color = generateColor(uuid);
 
     await this.generalController.addObject({ request, response, value, uuid });
   }

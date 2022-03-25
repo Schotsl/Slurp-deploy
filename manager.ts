@@ -161,7 +161,7 @@ class Manager {
 
   async fetchTaken(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
-      "SELECT HEX(`uuid`) AS `uuid`, `username`, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots FROM player WHERE server = UNHEX(REPLACE(?, '-', ''))",
+      "SELECT HEX(`uuid`) AS `uuid`, `username`, `color`, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots FROM player WHERE server = UNHEX(REPLACE(?, '-', ''))",
       [uuid],
     );
 
@@ -177,7 +177,7 @@ class Manager {
 
   async fetchRemaining(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
-      "SELECT HEX(`uuid`) AS `uuid`, `username`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_shots FROM player WHERE server = UNHEX(REPLACE(?, '-', ''))",
+      "SELECT HEX(`uuid`) AS `uuid`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_shots FROM player WHERE server = UNHEX(REPLACE(?, '-', ''))",
       [uuid],
     );
 
@@ -193,7 +193,7 @@ class Manager {
 
   async fetchGraph(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
-      "SELECT TIMESTAMP(CONCAT(YEAR(entry.created), '-', MONTH(entry.created), '-' , DAYOFMONTH(entry.created), ' ', HOUR(entry.created), ':', (FLOOR(MINUTE(entry.created) / 10) * 10), ':00')) AS timestamp, HEX(player.uuid) AS uuid, player.username, -SUM(entry.sips) AS sips, -SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND entry.transfer = 0 AND entry.created >= DATE_SUB(NOW(), INTERVAL 12 HOUR) AND (entry.sips < 0 OR entry.shots < 0) GROUP BY timestamp, entry.player;",
+      "SELECT TIMESTAMP(CONCAT(YEAR(entry.created), '-', MONTH(entry.created), '-' , DAYOFMONTH(entry.created), ' ', HOUR(entry.created), ':', (FLOOR(MINUTE(entry.created) / 10) * 10), ':00')) AS timestamp, HEX(player.uuid) AS uuid, player.username, player.color, -SUM(entry.sips) AS sips, -SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND entry.transfer = 0 AND entry.created >= DATE_SUB(NOW(), INTERVAL 12 HOUR) AND (entry.sips < 0 OR entry.shots < 0) GROUP BY timestamp, entry.player;",
       [uuid],
     );
 
