@@ -1,7 +1,6 @@
 import { Router } from "https://deno.land/x/oak@v10.1.0/mod.ts";
 import { authenticationHandler } from "../middleware.ts";
 
-import manager from "../manager.ts";
 import PlayerController from "../controller/PlayerController.ts";
 
 const playerRouter = new Router({ prefix: "/v1/player" });
@@ -14,19 +13,10 @@ const object = playerController.getObject.bind(playerController);
 
 playerRouter.use(authenticationHandler);
 
-playerRouter.get("/", get);
-playerRouter.get("/:uuid", object);
+playerRouter.get("/", get).use(authenticationHandler);
+playerRouter.get("/:uuid", object).use(authenticationHandler);
 
-playerRouter.post("/", post);
-playerRouter.delete("/:uuid", remove);
-
-playerRouter.get("/ws", async (ctx) => {
-  if (!ctx.isUpgradable) {
-    throw new Error("Connection is not upgradable!");
-  }
-
-  const socket = await ctx.upgrade();
-  manager.addClient(socket);
-});
+playerRouter.post("/", post).use(authenticationHandler);
+playerRouter.delete("/:uuid", remove).use(authenticationHandler);
 
 export default playerRouter;
