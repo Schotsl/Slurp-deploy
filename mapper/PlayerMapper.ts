@@ -21,18 +21,18 @@ export default class GeneralMapper implements InterfaceMapper {
     populateInstance(row, this.generalColumns, entity);
 
     entity.taken = {
-      sips: row.taken_sips,
-      shots: row.taken_shots,
+      sips: parseInt(row.taken_sips),
+      shots: parseInt(row.taken_shots),
     };
 
     entity.giveable = {
-      sips: row.giveable_sips,
-      shots: row.giveable_shots,
+      sips: parseInt(row.giveable_sips),
+      shots: parseInt(row.giveable_shots),
     };
 
     entity.remaining = {
-      sips: row.remaining_sips,
-      shots: row.remaining_shots,
+      sips: parseInt(row.remaining_sips),
+      shots: parseInt(row.remaining_shots),
     };
 
     return entity;
