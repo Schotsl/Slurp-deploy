@@ -72,7 +72,7 @@ export default class EntryController implements InterfaceController {
       value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0
     ) {
       throw new CustomError(
-        "Both 'sips' and 'shots' should either be positive or negative",
+        "Both 'sips' and 'shots' should either be positive or negative.",
         400,
       );
     }
