@@ -30,7 +30,7 @@ class Manager {
 
   authenticateClient(client: WebSocket) {
     client.onopen = () => {
-      client.send(`Please provide your Authentication header.`);
+      client.send(`Please provide your Authorization header.`);
     };
 
     client.onmessage = async (message) => {
@@ -39,7 +39,7 @@ class Manager {
       const result = regexp.test(header);
 
       if (!result) {
-        client.send(`Your Authentication header is improperly formatted.`);
+        client.send(`Your Authorization header is improperly formatted.`);
         return;
       }
 

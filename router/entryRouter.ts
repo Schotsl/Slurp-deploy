@@ -1,5 +1,5 @@
 import { Router } from "https://deno.land/x/oak@v10.1.0/mod.ts";
-import { authenticationHandler } from "../middleware.ts";
+import { authorizationHandler } from "../middleware.ts";
 
 import EntryController from "../controller/EntryController.ts";
 
@@ -11,7 +11,7 @@ const post = entryController.addObject.bind(entryController);
 const remove = entryController.removeObject.bind(entryController);
 const object = entryController.getObject.bind(entryController);
 
-entryRouter.use(authenticationHandler);
+entryRouter.use(authorizationHandler);
 
 entryRouter.get("/", get);
 entryRouter.get("/:uuid", object);

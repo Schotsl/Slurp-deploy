@@ -1,5 +1,5 @@
 import { Router } from "https://deno.land/x/oak@v10.1.0/mod.ts";
-import { authenticationHandler } from "../middleware.ts";
+import { authorizationHandler } from "../middleware.ts";
 
 import PlayerController from "../controller/PlayerController.ts";
 
@@ -11,12 +11,12 @@ const post = playerController.addObject.bind(playerController);
 const remove = playerController.removeObject.bind(playerController);
 const object = playerController.getObject.bind(playerController);
 
-playerRouter.use(authenticationHandler);
+playerRouter.use(authorizationHandler);
 
-playerRouter.get("/", get).use(authenticationHandler);
-playerRouter.get("/:uuid", object).use(authenticationHandler);
+playerRouter.get("/", get).use(authorizationHandler);
+playerRouter.get("/:uuid", object).use(authorizationHandler);
 
-playerRouter.post("/", post).use(authenticationHandler);
-playerRouter.delete("/:uuid", remove).use(authenticationHandler);
+playerRouter.post("/", post).use(authorizationHandler);
+playerRouter.delete("/:uuid", remove).use(authorizationHandler);
 
 export default playerRouter;
