@@ -2,7 +2,7 @@ import {
   Request,
   Response,
   State,
-} from "https://deno.land/x/oak@v10.1.0/mod.ts";
+} from "https://deno.land/x/oak@v10.6.0/mod.ts";
 
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
@@ -37,13 +37,14 @@ export default class PlayerController implements InterfaceController {
     },
   ) {
     const { offset, limit } = state;
-
+    
     const server = state.uuid;
     const result = await this.playerRepository.getCollection(
       offset,
       limit,
       server,
     );
+
     const parsed = renderREST(result);
 
     response.body = parsed;

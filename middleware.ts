@@ -1,6 +1,6 @@
 import { create, verify } from "https://deno.land/x/djwt@v2.3/mod.ts";
 import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
-import { Request, State } from "https://deno.land/x/oak@v10.1.0/mod.ts";
+import { Request, State } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 import {
   InvalidAuthorization,
   MissingAuthorization,
@@ -33,11 +33,11 @@ export async function createToken(uuid: string) {
 
 export async function verifyToken(token: string) {
   return await verify(token, key).catch(() => {
-    throw new InvalidAuthentication();
+    throw new InvalidAuthorization();
   });
 }
 
-export async function authenticationHandler(
+export async function authorizationHandler(
   { request, state }: {
     request: Request;
     state: State;
@@ -56,5 +56,5 @@ export async function authenticationHandler(
     return;
   }
 
-  throw new MissingAuthentication();
+  throw new MissingAuthorization();
 }

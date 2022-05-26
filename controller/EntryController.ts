@@ -3,7 +3,7 @@ import {
   Request,
   Response,
   State,
-} from "https://deno.land/x/oak@v10.1.0/mod.ts";
+} from "https://deno.land/x/oak@v10.6.0/mod.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
