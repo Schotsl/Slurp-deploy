@@ -2,7 +2,7 @@ import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main
 
 import { verifyToken } from "./middleware.ts";
 import { restoreUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
-
+import PlayerRepository from "./repository/PlayerRepository.ts";
 // interface Summary {
 //   uuid: string;
 //   sips: string;
@@ -48,11 +48,17 @@ interface ListenerPersonal extends Listener {
 }
 
 class Manager {
+  playerRepository: PlayerRepository;
+
   listenersPersonal: ListenerPersonal[] = [];
 
-  // find indexPersonal
+  constructor() {
+    this.playerRepository = new PlayerRepository("player");
+  }
 
   async addPersonal(client: WebSocket, uuid: string) {
+    this.playerRepository.getObject(uuid);
+
     const personal = {
       uuid,
       client,
