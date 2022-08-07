@@ -20,15 +20,13 @@ application.use(limitHandler);
 application.use(postHandler);
 
 application.use(entryRouter.routes());
-application.use(sessionRouter.routes());
 application.use(playerRouter.routes());
 application.use(socketRouter.routes());
+application.use(sessionRouter.routes());
 
 application.use(entryRouter.allowedMethods());
-application.use(sessionRouter.allowedMethods());
 application.use(playerRouter.allowedMethods());
 application.use(socketRouter.allowedMethods());
+application.use(sessionRouter.allowedMethods());
 
 application.listen({ port: 8080 });
-
-// Attempting redeploy
