@@ -5,9 +5,10 @@ import {
 } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
-import { CustomError, MissingProperty, InvalidProperty} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
-import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation/string.ts";
-import { generateColor } from "../helper.ts";
+import {
+  InvalidProperty,
+  MissingProperty,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
@@ -28,7 +29,11 @@ export default class PlayerController implements InterfaceController {
     name: string,
   ) {
     this.playerRepository = new PlayerRepository(name);
-    this.sessionRepository = new GeneralRepository('session', SessionEntity, SessionCollection);
+    this.sessionRepository = new GeneralRepository(
+      "session",
+      SessionEntity,
+      SessionCollection,
+    );
     this.generalController = new GeneralController(
       name,
       PlayerEntity,
@@ -101,7 +106,7 @@ export default class PlayerController implements InterfaceController {
     const value = await body.value;
 
     if (typeof value.session === "undefined") {
-      throw new MissingProperty('session');
+      throw new MissingProperty("session");
     }
 
     try {
@@ -110,13 +115,16 @@ export default class PlayerController implements InterfaceController {
     } catch {
       try {
         // If no valid UUID has been provided we'll try too look it up by short
-        const entity = await this.sessionRepository.getObjectBy('short', value.session) as SessionEn;
+        const entity = await this.sessionRepository.getObjectBy(
+          "short",
+          value.session,
+        ) as SessionEn;
         const session = entity.session.getValue();
 
         value.session = session;
       } catch {
         // If no valid UUID or short has been provided we'll abort
-        throw new InvalidProperty('session', 'UUID or short');
+        throw new InvalidProperty("session", "UUID or short");
       }
     }
 
