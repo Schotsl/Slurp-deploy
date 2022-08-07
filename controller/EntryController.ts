@@ -9,7 +9,8 @@ import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberd
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
-import manager from "../manager.ts";
+
+import managerPersonal from "../managerPersonal.ts";
 
 export default class EntryController implements InterfaceController {
   private generalController: GeneralController;
@@ -87,8 +88,14 @@ export default class EntryController implements InterfaceController {
     //   manager.updateRemaining(session);
     // }
 
+    // if (
+      // !value.giveable && !value.transfer && (value.shots < 0 || value.sips < 0)
+    // ) {
+      // manager.updateGraph(value.player);
+    // }
+
     // if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
-    manager.updatePersonal(value.player);
+      managerPersonal.updateStorage(value.player);
     // }
   }
 }
