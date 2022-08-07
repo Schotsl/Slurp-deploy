@@ -62,10 +62,9 @@ export default class EntryController implements InterfaceController {
   }
 
   async addObject(
-    { request, response, state }: {
+    { request, response }: {
       request: Request;
       response: Response;
-      state: State;
     },
   ) {
     const body = await request.body();
@@ -89,7 +88,7 @@ export default class EntryController implements InterfaceController {
     // }
 
     // if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
-      manager.updatePersonal(value.player);
+    manager.updatePersonal(value.player);
     // }
   }
 }

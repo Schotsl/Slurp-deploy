@@ -1,8 +1,6 @@
 import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/mysqlClient.ts";
-
-import { verifyToken } from "./middleware.ts";
-import { restoreUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
 import PlayerRepository from "./repository/PlayerRepository.ts";
+
 // interface Summary {
 //   uuid: string;
 //   sips: string;
@@ -29,11 +27,6 @@ import PlayerRepository from "./repository/PlayerRepository.ts";
 export interface Consumable {
   sips: number;
   shots: number;
-}
-
-enum Type {
-  Session = 0,
-  Personal = 1,
 }
 
 interface Listener {
@@ -66,7 +59,7 @@ class Manager {
       giveable: { sips: 0, shots: 0 },
       remaining: { sips: 0, shots: 0 },
     };
-    
+
     this.listenersPersonal.push(personal);
 
     await this.updatePersonal(personal.uuid);
@@ -105,9 +98,9 @@ class Manager {
       taken,
       client,
       giveable,
-      remaining
+      remaining,
     } = listener;
-    
+
     const body = { taken, giveable, remaining };
     const json = JSON.stringify(body);
 
