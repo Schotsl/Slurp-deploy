@@ -49,11 +49,9 @@ export default class PlayerController implements InterfaceController {
   ) {
     const { offset, limit } = state;
 
-    const session = state.uuid;
     const result = await this.playerRepository.getCollection(
       offset,
       limit,
-      session,
     );
 
     const parsed = renderREST(result);
@@ -72,16 +70,13 @@ export default class PlayerController implements InterfaceController {
   }
 
   async getObject(
-    { response, params, state }: {
+    { response, params }: {
       response: Response;
       params: { uuid: string };
-      state: State;
     },
   ) {
     const uuid = params.uuid;
-    const session = state.uuid;
-
-    const result = await this.playerRepository.getObject(uuid, session);
+    const result = await this.playerRepository.getObject(uuid);
     const parsed = renderREST(result);
 
     response.body = parsed;
@@ -115,10 +110,13 @@ export default class PlayerController implements InterfaceController {
     } catch {
       try {
         // If no valid UUID has been provided we'll try too look it up by short
-        const entity = await this.sessionRepository.getObjectBy("short", value.session);
-        const session = entity.uuid.getValue();
+        const session = value.value;
+        const entity = await this.sessionRepository.getObjectBy(
+          "short",
+          session,
+        );
 
-        value.session = session;
+        value.session = entity.uuid.getValue();
       } catch {
         // If no valid UUID or short has been provided we'll abort
         throw new InvalidProperty("session", "UUID or short");
