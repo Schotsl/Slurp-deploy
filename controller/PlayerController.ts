@@ -115,11 +115,8 @@ export default class PlayerController implements InterfaceController {
     } catch {
       try {
         // If no valid UUID has been provided we'll try too look it up by short
-        const entity = await this.sessionRepository.getObjectBy(
-          "short",
-          value.session,
-        ) as SessionEn;
-        const session = entity.session.getValue();
+        const entity = await this.sessionRepository.getObjectBy("short", value.session);
+        const session = entity.uuid.getValue();
 
         value.session = session;
       } catch {
@@ -128,6 +125,6 @@ export default class PlayerController implements InterfaceController {
       }
     }
 
-    await this.generalController.addObject({ request, response });
+    await this.generalController.addObject({ request, response, value });
   }
 }
