@@ -11,7 +11,7 @@ export interface Consumable {
 }
 
 export default class PlayerEntity extends BaseEntity {
-  public server = new UUIDColumn("server", true);
+  public session = new UUIDColumn("session", true);
 
   public color = new VarcharColumn("color", true);
   public username = new VarcharColumn("name", true);

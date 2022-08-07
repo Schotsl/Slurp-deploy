@@ -38,11 +38,11 @@ export default class PlayerController implements InterfaceController {
   ) {
     const { offset, limit } = state;
 
-    const server = state.uuid;
+    const session = state.uuid;
     const result = await this.playerRepository.getCollection(
       offset,
       limit,
-      server,
+      session,
     );
 
     const parsed = renderREST(result);
@@ -68,9 +68,9 @@ export default class PlayerController implements InterfaceController {
     },
   ) {
     const uuid = params.uuid;
-    const server = state.uuid;
+    const session = state.uuid;
 
-    const result = await this.playerRepository.getObject(uuid, server);
+    const result = await this.playerRepository.getObject(uuid, session);
     const parsed = renderREST(result);
 
     response.body = parsed;
@@ -109,7 +109,7 @@ export default class PlayerController implements InterfaceController {
     const username = usernames[usernames.length - 1].name;
 
     value.username = username;
-    value.server = state.uuid;
+    value.session = state.uuid;
     value.color = generateColor(uuid);
 
     await this.generalController.addObject({ request, response, value, uuid });

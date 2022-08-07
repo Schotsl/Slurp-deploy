@@ -27,16 +27,16 @@ export default class PlayerRepository implements InterfaceRepository {
   public async getCollection(
     offset: number,
     limit: number,
-    server: string,
+    session: string,
   ): Promise<PlayerCollection> {
     const fetch =
-      "SELECT HEX(`uuid`) AS `uuid`, HEX(`server`) AS `server`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 1), 0) AS giveable_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player WHERE player.server = UNHEX(REPLACE(?, '-', '')) ORDER BY created DESC LIMIT ? OFFSET ?";
+      "SELECT HEX(`uuid`) AS `uuid`, HEX(`session`) AS `session`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 1), 0) AS giveable_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player WHERE player.session = UNHEX(REPLACE(?, '-', '')) ORDER BY created DESC LIMIT ? OFFSET ?";
     const count =
-      "SELECT COUNT(uuid) AS total FROM player WHERE player.server = UNHEX(REPLACE(?, '-', ''))";
+      "SELECT COUNT(uuid) AS total FROM player WHERE player.session = UNHEX(REPLACE(?, '-', ''))";
 
     const promises = [
-      mysqlClient.execute(fetch, [server, limit, offset]),
-      mysqlClient.execute(count, [server]),
+      mysqlClient.execute(fetch, [session, limit, offset]),
+      mysqlClient.execute(count, [session]),
     ];
 
     const data = await Promise.all(promises);
@@ -59,10 +59,10 @@ export default class PlayerRepository implements InterfaceRepository {
     return await this.generalRepository.addObject(object) as PlayerEntity;
   }
 
-  public async getObject(uuid: string, server: string): Promise<PlayerEntity> {
+  public async getObject(uuid: string, session: string): Promise<PlayerEntity> {
     const get =
-      "SELECT HEX(`uuid`) AS `uuid`, HEX(`server`) AS `server`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 1), 0) AS giveable_shots, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player WHERE uuid = UNHEX(REPLACE(?, '-', '')) AND server = UNHEX(REPLACE(?, '-', ''))";
-    const data = await mysqlClient.execute(get, [uuid, server]);
+      "SELECT HEX(`uuid`) AS `uuid`, HEX(`session`) AS `session`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 1), 0) AS giveable_shots, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player WHERE uuid = UNHEX(REPLACE(?, '-', '')) AND session = UNHEX(REPLACE(?, '-', ''))";
+    const data = await mysqlClient.execute(get, [uuid, session]);
 
     if (typeof data.rows === "undefined" || data.rows.length === 0) {
       throw new MissingResource(this.generalName);

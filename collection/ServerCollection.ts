@@ -1,6 +1,6 @@
 import BaseCollection from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/collection/BaseCollection.ts";
-import ServerEntity from "../entity/ServerEntity.ts";
+import SessionEntity from "../entity/SessionEntity.ts";
 
-export default class ServerCollection extends BaseCollection {
-  public servers: ServerEntity[] = [];
+export default class SessionCollection extends BaseCollection {
+  public sessions: SessionEntity[] = [];
 }

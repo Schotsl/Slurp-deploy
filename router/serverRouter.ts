@@ -1,10 +1,10 @@
 import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/router/GeneralRouter.ts";
-import ServerController from "../controller/ServerController.ts";
+import SessionController from "../controller/SessionController.ts";
 
-const serverController = new ServerController("server");
-const serverRouter = new GeneralRouter(
-  serverController,
-  "server",
+const sessionController = new SessionController("session");
+const sessionRouter = new GeneralRouter(
+  sessionController,
+  "session",
 );
 
-export default serverRouter.router;
+export default sessionRouter.router;

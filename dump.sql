@@ -1,4 +1,4 @@
-CREATE TABLE server (
+CREATE TABLE session (
 	uuid BINARY(16) NOT NULL,
 
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -9,7 +9,7 @@ CREATE TABLE server (
 
 CREATE TABLE player (
 	uuid BINARY(16) NOT NULL,
-	server BINARY(16) NOT NULL,
+	session BINARY(16) NOT NULL,
 
 	color VARCHAR(255) NOT NULL,
 	username VARCHAR(255) NOT NULL,
@@ -17,14 +17,14 @@ CREATE TABLE player (
 	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-	PRIMARY KEY (server, uuid),
-	FOREIGN KEY (server) REFERENCES server(uuid) ON DELETE CASCADE
+	PRIMARY KEY (session, uuid),
+	FOREIGN KEY (session) REFERENCES session(uuid) ON DELETE CASCADE
 )
 
 CREATE TABLE entry (
 	uuid BINARY(16) NOT NULL,
 
-	server BINARY(16) NOT NULL,
+	session BINARY(16) NOT NULL,
 	player BINARY(16) NOT NULL,
 
 	sips TINYINT DEFAULT 0,
@@ -37,7 +37,7 @@ CREATE TABLE entry (
 	updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	PRIMARY KEY (uuid),
-	FOREIGN KEY (player, server) REFERENCES player(uuid, server) ON DELETE CASCADE
+	FOREIGN KEY (player, session) REFERENCES player(uuid, session) ON DELETE CASCADE
 )
 
 ENGINE=InnoDB
@@ -59,10 +59,10 @@ COLLATE=utf8mb4_0900_ai_ci;
 -- INNER JOIN
 -- 	player ON
 -- 	(player.uuid,
--- 	player.server) = (entry.player,
--- 	entry.server)
+-- 	player.session) = (entry.player,
+-- 	entry.session)
 -- WHERE
--- 	player.server = UNHEX(REPLACE('b2955a40-4018-447d-a6b2-e42b2930eb35',
+-- 	player.session = UNHEX(REPLACE('b2955a40-4018-447d-a6b2-e42b2930eb35',
 -- 	'-',
 -- 	''))
 -- 	AND entry.giveable = 0
@@ -88,10 +88,10 @@ COLLATE=utf8mb4_0900_ai_ci;
 -- INNER JOIN
 -- 	player ON
 -- 	(player.uuid,
--- 	player.server) = (entry.player,
--- 	entry.server)
+-- 	player.session) = (entry.player,
+-- 	entry.session)
 -- WHERE
--- 	player.server = UNHEX(REPLACE('b2955a40-4018-447d-a6b2-e42b2930eb35',
+-- 	player.session = UNHEX(REPLACE('b2955a40-4018-447d-a6b2-e42b2930eb35',
 -- 	'-',
 -- 	''))
 -- 	AND entry.giveable = 0
@@ -115,10 +115,10 @@ COLLATE=utf8mb4_0900_ai_ci;
 -- INNER JOIN
 -- 	player ON
 -- 	(player.uuid,
--- 	player.server) = (entry.player,
--- 	entry.server)
+-- 	player.session) = (entry.player,
+-- 	entry.session)
 -- WHERE
--- 	player.server = UNHEX(REPLACE('b2955a40-4018-447d-a6b2-e42b2930eb35',
+-- 	player.session = UNHEX(REPLACE('b2955a40-4018-447d-a6b2-e42b2930eb35',
 -- 	'-',
 -- 	''))
 -- 	AND entry.giveable = 0

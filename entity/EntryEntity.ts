@@ -7,7 +7,7 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 
 export default class EntryEntity extends BaseEntity {
-  public server = new UUIDColumn("server", true);
+  public session = new UUIDColumn("session", true);
   public player = new UUIDColumn("player", true);
 
   public sips = new SmallColumn("sips", true, 0);

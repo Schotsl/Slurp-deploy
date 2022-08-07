@@ -7,10 +7,10 @@ import {
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
-import ServerCollection from "../collection/ServerCollection.ts";
-import ServerEntity from "../entity/ServerEntity.ts";
+import SessionCollection from "../collection/SessionCollection.ts";
+import SessionEntity from "../entity/SessionEntity.ts";
 
-export default class ServerController implements InterfaceController {
+export default class SessionController implements InterfaceController {
   private generalController: GeneralController;
 
   constructor(
@@ -18,8 +18,8 @@ export default class ServerController implements InterfaceController {
   ) {
     this.generalController = new GeneralController(
       name,
-      ServerEntity,
-      ServerCollection,
+      SessionEntity,
+      SessionCollection,
     );
   }
 
@@ -66,14 +66,14 @@ export default class ServerController implements InterfaceController {
     const body = await request.body();
     const value = await body.value;
     console.log(typeof value);
-    const server = await this.generalController.addObject({
+    const session = await this.generalController.addObject({
       request,
       response,
       value,
     });
-    const uuid = server.uuid;
+    const uuid = session.uuid;
     const token = await createToken(uuid);
 
-    response.body = { ...server, token };
+    response.body = { ...session, token };
   }
 }

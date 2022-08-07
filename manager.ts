@@ -10,7 +10,7 @@ interface Summary {
   username: string;
 }
 
-interface Server {
+interface Session {
   uuid: string;
   taken: Summary[];
   graphs: Summary[];
@@ -26,7 +26,7 @@ enum Fields {
 }
 
 class Manager {
-  servers: Server[] = [];
+  sessions: Session[] = [];
 
   authenticateClient(client: WebSocket) {
     client.onopen = () => {
@@ -47,10 +47,10 @@ class Manager {
 
       try {
         const payload = await verifyToken(token);
-        const server = payload.uuid as string;
+        const session = payload.uuid as string;
 
-        // Store the client for future server updates
-        this.storeClient(server, client);
+        // Store the client for future session updates
+        this.storeClient(session, client);
 
         // Disable the onmessage event
         client.onmessage = () => {};
@@ -62,34 +62,34 @@ class Manager {
     };
   }
 
-  findServer(uuid: string) {
-    return this.servers.find((server) => server.uuid === uuid);
+  findSession(uuid: string) {
+    return this.sessions.find((session) => session.uuid === uuid);
   }
 
   async storeClient(uuid: string, client: WebSocket) {
-    const server = this.servers.find((server) => server.uuid === uuid);
+    const session = this.sessions.find((session) => session.uuid === uuid);
 
-    if (typeof server !== "undefined") {
-      server.clients.push(client);
-      this.updateClient(server, Fields.All, client);
+    if (typeof session !== "undefined") {
+      session.clients.push(client);
+      this.updateClient(session, Fields.All, client);
       return;
     }
 
-    // If we creating a new server
+    // If we creating a new session
     const clients = [client];
     const taken = await this.fetchTaken(uuid);
     const graphs = await this.fetchGraph(uuid);
     const remaining = await this.fetchRemaining(uuid);
     const object = { uuid, clients, taken, graphs, remaining };
 
-    this.servers.push(object);
+    this.sessions.push(object);
     this.updateClient(object, Fields.All, client);
   }
 
-  updateClient(server: Server, field: Fields, client?: WebSocket) {
+  updateClient(session: Session, field: Fields, client?: WebSocket) {
     const data = field === Fields.All
-      ? this.fetchAll(server)
-      : this.fetchField(server, field);
+      ? this.fetchAll(session)
+      : this.fetchField(session, field);
     const body = JSON.stringify(data);
 
     if (typeof client !== "undefined") {
@@ -97,60 +97,60 @@ class Manager {
       return;
     }
 
-    server.clients.forEach((client) => {
+    session.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(body);
       }
     });
   }
 
-  fetchAll(server: Server) {
+  fetchAll(session: Session) {
     return {
-      taken: server.taken,
-      graphs: server.graphs,
-      remaining: server.remaining,
+      taken: session.taken,
+      graphs: session.graphs,
+      remaining: session.remaining,
     };
   }
 
-  fetchField(server: Server, field: Fields) {
+  fetchField(session: Session, field: Fields) {
     if (field === Fields.Taken) {
-      return { taken: server.taken };
+      return { taken: session.taken };
     }
 
     if (field === Fields.Remaining) {
-      return { remaining: server.remaining };
+      return { remaining: session.remaining };
     }
 
     if (field === Fields.Graphs) {
-      return { graphs: server.graphs };
+      return { graphs: session.graphs };
     }
   }
 
   // async updateTaken(uuid: string) {
-  //   const server = this.servers.find((server) => server.uuid === uuid);
+  //   const session = this.sessions.find((session) => session.uuid === uuid);
   //   const taken = await this.getTaken(uuid);
 
-  //   if (typeof server !== "undefined") {
-  //     server.taken = taken;
+  //   if (typeof session !== "undefined") {
+  //     session.taken = taken;
 
-  //     this.sendUpdate(server);
+  //     this.sendUpdate(session);
   //   }
   // }
 
   // async updateTodo(uuid: string) {
-  //   const server = this.servers.find((server) => server.uuid === uuid);
+  //   const session = this.sessions.find((session) => session.uuid === uuid);
   //   const todo = await this.getTodo(uuid);
 
-  //   if (typeof server !== "undefined") {
-  //     server.todo = todo;
+  //   if (typeof session !== "undefined") {
+  //     session.todo = todo;
 
-  //     this.sendUpdate(server);
+  //     this.sendUpdate(session);
   //   }
   // }
 
   // async getTodo(uuid: string): Promise<Summary[]> {
   //   const result = await mysqlClient.execute(
-  //     `SELECT HEX(player.uuid) AS uuid, player.username, SUM(entry.sips) AS sips, SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND (entry.sips > 0 OR entry.shots > 0) GROUP BY entry.player`,
+  //     `SELECT HEX(player.uuid) AS uuid, player.username, SUM(entry.sips) AS sips, SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.session) = (entry.player, entry.session) WHERE player.session = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND (entry.sips > 0 OR entry.shots > 0) GROUP BY entry.player`,
   //     [uuid],
   //   );
   //   return result.rows!.map((row) => {
@@ -161,7 +161,7 @@ class Manager {
 
   async fetchTaken(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
-      "SELECT HEX(`uuid`) AS `uuid`, `username`, `color`, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots FROM player WHERE server = UNHEX(REPLACE(?, '-', ''))",
+      "SELECT HEX(`uuid`) AS `uuid`, `username`, `color`, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots FROM player WHERE session = UNHEX(REPLACE(?, '-', ''))",
       [uuid],
     );
 
@@ -177,7 +177,7 @@ class Manager {
 
   async fetchRemaining(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
-      "SELECT HEX(`uuid`) AS `uuid`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.server = player.server AND entry.giveable = 0), 0) AS remaining_shots FROM player WHERE server = UNHEX(REPLACE(?, '-', ''))",
+      "SELECT HEX(`uuid`) AS `uuid`, `username`, `color`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0), 0) AS remaining_shots FROM player WHERE session = UNHEX(REPLACE(?, '-', ''))",
       [uuid],
     );
 
@@ -193,7 +193,7 @@ class Manager {
 
   async fetchGraph(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
-      "SELECT TIMESTAMP(CONCAT(YEAR(entry.created), '-', MONTH(entry.created), '-' , DAYOFMONTH(entry.created), ' ', HOUR(entry.created), ':', (FLOOR(MINUTE(entry.created) / 10) * 10), ':00')) AS timestamp, HEX(player.uuid) AS uuid, player.username, player.color, -SUM(entry.sips) AS sips, -SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.server) = (entry.player, entry.server) WHERE player.server = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND entry.transfer = 0 AND entry.created >= DATE_SUB(NOW(), INTERVAL 12 HOUR) AND (entry.sips < 0 OR entry.shots < 0) GROUP BY timestamp, entry.player;",
+      "SELECT TIMESTAMP(CONCAT(YEAR(entry.created), '-', MONTH(entry.created), '-' , DAYOFMONTH(entry.created), ' ', HOUR(entry.created), ':', (FLOOR(MINUTE(entry.created) / 10) * 10), ':00')) AS timestamp, HEX(player.uuid) AS uuid, player.username, player.color, -SUM(entry.sips) AS sips, -SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.session) = (entry.player, entry.session) WHERE player.session = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND entry.transfer = 0 AND entry.created >= DATE_SUB(NOW(), INTERVAL 12 HOUR) AND (entry.sips < 0 OR entry.shots < 0) GROUP BY timestamp, entry.player;",
       [uuid],
     );
 
@@ -208,38 +208,38 @@ class Manager {
   }
 
   async updateTaken(uuid: string): Promise<void> {
-    const server = this.findServer(uuid);
+    const session = this.findSession(uuid);
 
-    if (typeof server !== "undefined") {
+    if (typeof session !== "undefined") {
       const taken = await this.fetchTaken(uuid);
 
-      server.taken = taken;
+      session.taken = taken;
 
-      this.updateClient(server, Fields.Taken);
+      this.updateClient(session, Fields.Taken);
     }
   }
 
   async updateRemaining(uuid: string): Promise<void> {
-    const server = this.findServer(uuid);
+    const session = this.findSession(uuid);
 
-    if (typeof server !== "undefined") {
+    if (typeof session !== "undefined") {
       const remaining = await this.fetchRemaining(uuid);
 
-      server.remaining = remaining;
+      session.remaining = remaining;
 
-      this.updateClient(server, Fields.Remaining);
+      this.updateClient(session, Fields.Remaining);
     }
   }
 
   async updateGraph(uuid: string): Promise<void> {
-    const server = this.findServer(uuid);
+    const session = this.findSession(uuid);
 
-    if (typeof server !== "undefined") {
+    if (typeof session !== "undefined") {
       const graphs = await this.fetchGraph(uuid);
 
-      server.graphs = graphs;
+      session.graphs = graphs;
 
-      this.updateClient(server, Fields.Graphs);
+      this.updateClient(session, Fields.Graphs);
     }
   }
 }
