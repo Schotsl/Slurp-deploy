@@ -62,7 +62,17 @@ export default class SessionController implements InterfaceController {
   async addObject(
     { request, response }: { request: Request; response: Response },
   ) {
-    const shorts = ["vodka", "smirnoff", "rum", "whiskey", "absolut", "fireball", "bourbon", "tequila", "jagermeister"];
+    const shorts = [
+      "vodka",
+      "smirnoff",
+      "rum",
+      "whiskey",
+      "absolut",
+      "fireball",
+      "bourbon",
+      "tequila",
+      "jagermeister",
+    ];
     const short = shorts[Math.floor(Math.random() * shorts.length)];
 
     const body = await request.body();
