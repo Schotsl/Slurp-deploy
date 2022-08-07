@@ -5,24 +5,30 @@ import {
 } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
-import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import { CustomError, MissingProperty, InvalidProperty} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import { validateUUID } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/validation/string.ts";
 import { generateColor } from "../helper.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 
+import SessionEntity from "../entity/SessionEntity.ts";
+import SessionCollection from "../collection/SessionCollection.ts";
+
 export default class PlayerController implements InterfaceController {
   private playerRepository: PlayerRepository;
+  private sessionRepository: GeneralRepository;
   private generalController: GeneralController;
 
   constructor(
     name: string,
   ) {
     this.playerRepository = new PlayerRepository(name);
+    this.sessionRepository = new GeneralRepository('session', SessionEntity, SessionCollection);
     this.generalController = new GeneralController(
       name,
       PlayerEntity,
@@ -86,32 +92,34 @@ export default class PlayerController implements InterfaceController {
   }
 
   async addObject(
-    { request, response, state }: {
+    { request, response }: {
       request: Request;
       response: Response;
-      state: State;
     },
   ) {
     const body = await request.body();
     const value = await body.value;
-    const uuid = value.uuid!;
 
-    validateUUID(uuid, "uuid");
-
-    const endpoint = `https://api.mojang.com/user/profiles/${value.uuid}/names`;
-    const results = await fetch(endpoint);
-
-    if (results.status !== 200) {
-      throw new CustomError("No Mojang profile found with this UUID.", 404);
+    if (typeof value.session === "undefined") {
+      throw new MissingProperty('session');
     }
 
-    const usernames = await results.json();
-    const username = usernames[usernames.length - 1].name;
+    try {
+      // Check if the user has provided a valid UUID
+      await this.sessionRepository.getObject(value.session);
+    } catch {
+      try {
+        // If no valid UUID has been provided we'll try too look it up by short
+        const entity = await this.sessionRepository.getObjectBy('short', value.session) as SessionEn;
+        const session = entity.session.getValue();
 
-    value.username = username;
-    value.session = state.uuid;
-    value.color = generateColor(uuid);
+        value.session = session;
+      } catch {
+        // If no valid UUID or short has been provided we'll abort
+        throw new InvalidProperty('session', 'UUID or short');
+      }
+    }
 
-    await this.generalController.addObject({ request, response, value, uuid });
+    await this.generalController.addObject({ request, response });
   }
 }
