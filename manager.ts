@@ -126,39 +126,6 @@ class Manager {
     }
   }
 
-  // async updateTaken(uuid: string) {
-  //   const session = this.sessions.find((session) => session.uuid === uuid);
-  //   const taken = await this.getTaken(uuid);
-
-  //   if (typeof session !== "undefined") {
-  //     session.taken = taken;
-
-  //     this.sendUpdate(session);
-  //   }
-  // }
-
-  // async updateTodo(uuid: string) {
-  //   const session = this.sessions.find((session) => session.uuid === uuid);
-  //   const todo = await this.getTodo(uuid);
-
-  //   if (typeof session !== "undefined") {
-  //     session.todo = todo;
-
-  //     this.sendUpdate(session);
-  //   }
-  // }
-
-  // async getTodo(uuid: string): Promise<Summary[]> {
-  //   const result = await mysqlClient.execute(
-  //     `SELECT HEX(player.uuid) AS uuid, player.username, SUM(entry.sips) AS sips, SUM(entry.shots) AS shots FROM entry INNER JOIN player ON (player.uuid, player.session) = (entry.player, entry.session) WHERE player.session = UNHEX(REPLACE(?, '-', '')) AND entry.giveable = 0 AND (entry.sips > 0 OR entry.shots > 0) GROUP BY entry.player`,
-  //     [uuid],
-  //   );
-  //   return result.rows!.map((row) => {
-  //     const uuid = restoreUUID(row.uuid);
-  //     return { ...row, uuid };
-  //   });
-  // }
-
   async fetchTaken(uuid: string): Promise<Summary[]> {
     const result = await mysqlClient.execute(
       "SELECT HEX(`uuid`) AS `uuid`, `username`, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.session = player.session AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots FROM player WHERE session = UNHEX(REPLACE(?, '-', ''))",
