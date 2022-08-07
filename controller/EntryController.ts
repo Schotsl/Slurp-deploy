@@ -70,9 +70,6 @@ export default class EntryController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
-    const session = state.uuid;
-
-    value.session = session;
 
     await this.generalController.addObject({ request, response, value });
 
@@ -92,7 +89,7 @@ export default class EntryController implements InterfaceController {
     // }
 
     // if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
-    //   manager.updateRemaining(session);
+      manager.updatePersonal(value.player);
     // }
   }
 }

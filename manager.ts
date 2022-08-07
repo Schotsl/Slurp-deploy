@@ -43,42 +43,74 @@ interface Listener {
 
 interface ListenerPersonal extends Listener {
   taken: Consumable;
-  givable: Consumable;
+  giveable: Consumable;
   remaining: Consumable;
 }
 
 class Manager {
   listenersPersonal: ListenerPersonal[] = [];
 
+  // find indexPersonal
+
   async addPersonal(client: WebSocket, uuid: string) {
-    this.listenersPersonal.push({
+    const personal = {
       uuid,
       client,
       taken: { sips: 0, shots: 0 },
-      givable: { sips: 0, shots: 0 },
+      giveable: { sips: 0, shots: 0 },
       remaining: { sips: 0, shots: 0 },
-    });
+    };
+    
+    this.listenersPersonal.push(personal);
 
-    await this.fetchPersonal(uuid);
+    await this.updatePersonal(personal.uuid);
   }
 
-  async fetchPersonal(uuid: string) {
-    const index = this.listenersPersonal.findIndex(
-      (listener) => listener.uuid == uuid,
-    );
-    const results = await mysqlClient.query(
+  async updatePersonal(uuid: string) {
+    const result = await mysqlClient.query(
       "SELECT IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_shots, IFNULL(-(SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL(-(SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots FROM player WHERE uuid = UNHEX(REPLACE(?, '-', ''))",
       [uuid],
     );
 
+    const index = this.listenersPersonal.findIndex(
+      (listener) => listener.uuid == uuid,
+    );
+
     this.listenersPersonal[index].taken = {
-      sips: results[0].taken_sips,
-      shots: results[0].taken_shots,
+      sips: result[0].taken_sips,
+      shots: result[0].taken_shots,
     };
+
+    this.listenersPersonal[index].giveable = {
+      sips: result[0].taken_sips,
+      shots: result[0].taken_shots,
+    };
+
+    this.listenersPersonal[index].remaining = {
+      sips: result[0].remaining_sips,
+      shots: result[0].remaining_shots,
+    };
+
+    this.sendPersonal(this.listenersPersonal[index]);
   }
 
-  updateData(uuid: string) {
+  sendPersonal(listener: ListenerPersonal) {
+    const {
+      taken,
+      client,
+      giveable,
+      remaining
+    } = listener;
+    
+    const body = { taken, giveable, remaining };
+    const json = JSON.stringify(body);
+
+    client.send(json);
   }
+
+  // sendPersonal() {
+
+  // }
 
   // async storeClient(uuid: string, client: WebSocket) {
   //   const session = this.sessions.find((session) => session.uuid === uuid);
