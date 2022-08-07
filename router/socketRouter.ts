@@ -4,14 +4,15 @@ import manager from "../manager.ts";
 
 const socketRouter = new Router({ prefix: "/v1/socket" });
 
-socketRouter.get("/", async (ctx) => {
+socketRouter.get("/:uuid", async (ctx) => {
+  const uuid = ctx.params.uuid;
   if (!ctx.isUpgradable) {
     throw new Error("Connection is not upgradable!");
   }
 
   const socket = await ctx.upgrade();
 
-  manager.authenticateClient(socket);
+  manager.addPersonal(socket, uuid);
 });
 
 export default socketRouter;

@@ -85,14 +85,14 @@ export default class EntryController implements InterfaceController {
       );
     }
 
-    if (!value.giveable && (value.shots < 0 || value.sips < 0)) {
-      manager.updateTaken(session);
-      manager.updateGraph(session);
-      manager.updateRemaining(session);
-    }
+    // if (!value.giveable && (value.shots < 0 || value.sips < 0)) {
+    //   manager.updateTaken(session);
+    //   manager.updateGraph(session);
+    //   manager.updateRemaining(session);
+    // }
 
-    if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
-      manager.updateRemaining(session);
-    }
+    // if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
+    //   manager.updateRemaining(session);
+    // }
   }
 }
