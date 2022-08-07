@@ -50,6 +50,16 @@ export default class PlayerController implements InterfaceController {
     response.body = parsed;
   }
 
+  async updateObject(
+    { request, response, params }: {
+      request: Request;
+      response: Response;
+      params: { uuid: string };
+    },
+  ) {
+    await this.generalController.updateObject({ request, response, params });
+  }
+
   async getObject(
     { response, params, state }: {
       response: Response;

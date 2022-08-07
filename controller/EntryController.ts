@@ -44,6 +44,16 @@ export default class EntryController implements InterfaceController {
     await this.generalController.getObject({ response, params });
   }
 
+  async updateObject(
+    { request, response, params }: {
+      request: Request;
+      response: Response;
+      params: { uuid: string };
+    },
+  ) {
+    await this.generalController.updateObject({ request, response, params });
+  }
+
   async removeObject(
     { response, params }: {
       response: Response;
