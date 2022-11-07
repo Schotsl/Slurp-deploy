@@ -1,6 +1,6 @@
 import { create, verify } from "https://deno.land/x/djwt@v2.3/mod.ts";
 import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/helper.ts";
-import { Request, State } from "https://deno.land/x/oak@v10.6.0/mod.ts";
+import { Request, State } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import {
   InvalidAuthorization,
   MissingAuthorization,
