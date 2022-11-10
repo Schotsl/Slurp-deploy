@@ -1,12 +1,12 @@
-import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/errors.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/controller/GeneralController.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
@@ -89,13 +89,13 @@ export default class EntryController implements InterfaceController {
     // }
 
     // if (
-      // !value.giveable && !value.transfer && (value.shots < 0 || value.sips < 0)
+    // !value.giveable && !value.transfer && (value.shots < 0 || value.sips < 0)
     // ) {
-      // manager.updateGraph(value.player);
+    // manager.updateGraph(value.player);
     // }
 
     // if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
-      managerPersonal.updateStorage(value.player);
+    managerPersonal.updateStorage(value.player);
     // }
   }
 }
