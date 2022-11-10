@@ -1,11 +1,11 @@
-import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/types.ts";
+import { ColumnInfo } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/types.ts";
 import {
   generateColumns,
   populateInstance,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/helper.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/helper.ts";
 
 import PlayerEntity from "../entity/PlayerEntity.ts";
-import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/mapper/InterfaceMapper.ts";
+import InterfaceMapper from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/mapper/InterfaceMapper.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 
 export default class GeneralMapper implements InterfaceMapper {
