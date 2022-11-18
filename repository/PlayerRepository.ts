@@ -1,11 +1,11 @@
-import { MissingResource } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/errors.ts";
+import { MissingResource } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/errors.ts";
 
-import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/services/mysqlClient.ts";
+import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/services/mysqlClient.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 import PlayerMapper from "../mapper/PlayerMapper.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/repository/GeneralRepository.ts";
-import InterfaceRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/repository/InterfaceRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/repository/GeneralRepository.ts";
+import InterfaceRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/repository/InterfaceRepository.ts";
 
 export default class PlayerRepository implements InterfaceRepository {
   private generalName: string;
