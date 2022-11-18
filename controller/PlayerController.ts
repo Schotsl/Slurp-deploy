@@ -4,16 +4,16 @@ import {
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/helper.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/helper.ts";
 import {
   InvalidProperty,
   MissingProperty,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/errors.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/errors.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/controller/GeneralController.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/repository/GeneralRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 

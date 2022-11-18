@@ -1,12 +1,12 @@
-import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/errors.ts";
+import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/errors.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.2/controller/GeneralController.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
