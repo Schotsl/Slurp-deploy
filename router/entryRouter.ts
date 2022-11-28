@@ -1,4 +1,4 @@
-import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/router/GeneralRouter.ts";
+import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/router/GeneralRouter.ts";
 import EntryController from "../controller/EntryController.ts";
 
 const entryController = new EntryController("entry");
