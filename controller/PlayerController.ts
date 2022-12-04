@@ -60,13 +60,19 @@ export default class PlayerController implements InterfaceController {
   }
 
   async updateObject(
-    { request, response, params }: {
+    { request, response, params, state }: {
       request: Request;
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.updateObject({ request, response, params });
+    await this.generalController.updateObject({
+      request,
+      response,
+      params,
+      state,
+    });
   }
 
   async getObject(
@@ -83,18 +89,20 @@ export default class PlayerController implements InterfaceController {
   }
 
   async removeObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.removeObject({ response, params });
+    await this.generalController.removeObject({ response, params, state });
   }
 
   async addObject(
-    { request, response }: {
+    { request, response, state }: {
       request: Request;
       response: Response;
+      state: State;
     },
   ) {
     const body = await request.body();
@@ -123,6 +131,6 @@ export default class PlayerController implements InterfaceController {
       }
     }
 
-    await this.generalController.addObject({ request, response, value });
+    await this.generalController.addObject({ request, response, value, state });
   }
 }

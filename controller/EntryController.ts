@@ -35,43 +35,52 @@ export default class EntryController implements InterfaceController {
   }
 
   async getObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.getObject({ response, params });
+    await this.generalController.getObject({ response, params, state });
   }
 
   async updateObject(
-    { request, response, params }: {
+    { request, response, params, state }: {
       request: Request;
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.updateObject({ request, response, params });
+    await this.generalController.updateObject({
+      request,
+      response,
+      params,
+      state,
+    });
   }
 
   async removeObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.removeObject({ response, params });
+    await this.generalController.removeObject({ response, params, state });
   }
 
   async addObject(
-    { request, response }: {
+    { request, response, state }: {
       request: Request;
       response: Response;
+      state: State;
     },
   ) {
     const body = await request.body();
     const value = await body.value;
 
-    await this.generalController.addObject({ request, response, value });
+    await this.generalController.addObject({ request, response, state, value });
 
     if (
       value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0
