@@ -1,3 +1,4 @@
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/helper.ts";
 import {
   Request,
   Response,
@@ -8,13 +9,23 @@ import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberd
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/GeneralController.ts";
 import SessionCollection from "../collection/SessionCollection.ts";
 import SessionEntity from "../entity/SessionEntity.ts";
+import PlayerCollection from "../collection/PlayerCollection.ts";
+import PlayerEntity from "../entity/PlayerEntity.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/repository/GeneralRepository.ts";
 
 export default class SessionController implements InterfaceController {
   private generalController: GeneralController;
+  private playerRepository: GeneralRepository;
 
   constructor(
     name: string,
   ) {
+    this.playerRepository = new GeneralRepository(
+      "player",
+      PlayerEntity,
+      PlayerCollection,
+    );
+
     this.generalController = new GeneralController(
       name,
       SessionEntity,
@@ -32,35 +43,60 @@ export default class SessionController implements InterfaceController {
   }
 
   async updateObject(
-    { request, response, params }: {
+    { request, response, params, state }: {
       request: Request;
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.updateObject({ request, response, params });
+    await this.generalController.updateObject({
+      request,
+      response,
+      params,
+      state,
+    });
   }
 
   async getObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.getObject({ response, params });
+    const session = await this.generalController.getObject({
+      response,
+      params,
+      state,
+    });
+
+    const players = await this.playerRepository.getCollection(0, 1000, {
+      key: "session",
+      value: params.uuid,
+      type: "uuidv4",
+    }) as PlayerCollection;
+
+    session.players = players.players;
+    response.body = renderREST(session);
   }
 
   async removeObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    await this.generalController.removeObject({ response, params });
+    await this.generalController.removeObject({ response, params, state });
   }
 
   async addObject(
-    { request, response }: { request: Request; response: Response },
+    { request, response, state }: {
+      request: Request;
+      response: Response;
+      state: State;
+    },
   ) {
     const shorts = [
       "vodka",
@@ -82,6 +118,7 @@ export default class SessionController implements InterfaceController {
     response.body = await this.generalController.addObject({
       request,
       response,
+      state,
       value,
     });
   }

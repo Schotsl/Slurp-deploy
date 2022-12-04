@@ -1,4 +1,4 @@
-import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/services/mysqlClient.ts";
+import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/services/mysqlClient.ts";
 import PlayerRepository from "./repository/PlayerRepository.ts";
 
 import { Consumable, Listener } from "./types.ts";
