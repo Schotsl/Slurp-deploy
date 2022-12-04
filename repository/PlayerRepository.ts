@@ -1,3 +1,4 @@
+import { Filter } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/types.ts";
 import { MissingResource } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/errors.ts";
 
 import mysqlClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/services/mysqlClient.ts";
@@ -27,13 +28,19 @@ export default class PlayerRepository implements InterfaceRepository {
   public async getCollection(
     offset: number,
     limit: number,
+    _filter?: Filter,
+    session?: string,
   ): Promise<PlayerCollection> {
-    const fetch =
-      "SELECT HEX(`uuid`) AS `uuid`, HEX(`session`) AS `session`, `username`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player ORDER BY created DESC LIMIT ? OFFSET ?";
-    const count = "SELECT COUNT(uuid) AS total FROM player";
+    const fetch = session
+      ? "SELECT HEX(`uuid`) AS `uuid`, HEX(`session`) AS `session`, `username`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player WHERE session = UNHEX(REPLACE(?, '-', '')) ORDER BY created DESC LIMIT ? OFFSET ?"
+      : "SELECT HEX(`uuid`) AS `uuid`, HEX(`session`) AS `session`, `username`, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0), 0) AS remaining_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 1), 0) AS giveable_shots, IFNULL((SELECT SUM(sips) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.sips < 0), 0) AS taken_sips, IFNULL((SELECT SUM(shots) FROM entry WHERE entry.player = player.uuid AND entry.giveable = 0 AND entry.transfer = 0 AND entry.shots < 0), 0) AS taken_shots, `created`, `updated` FROM player ORDER BY created DESC LIMIT ? OFFSET ?";
+
+    const count = session
+      ? "SELECT COUNT(uuid) AS total FROM player"
+      : "SELECT COUNT(uuid) AS total FROM player WHERE session = UNHEX(REPLACE(?, '-', ''))";
 
     const promises = [
-      mysqlClient.execute(fetch, [limit, offset]),
+      mysqlClient.execute(fetch, session ? [session, limit, offset] : [limit, offset]),
       mysqlClient.execute(count),
     ];
 
@@ -68,5 +75,13 @@ export default class PlayerRepository implements InterfaceRepository {
 
     const row = data.rows![0];
     return this.playerMapper.mapObject(row) as PlayerEntity;
+  }
+
+  public async updateObject(object: PlayerEntity): Promise<PlayerEntity> {
+    return await this.generalRepository.updateObject(object) as PlayerEntity;
+  }
+
+  public async getObjectBy(key: string, value: string, filter: Filter): Promise<PlayerEntity> {
+    return await this.generalRepository.getObjectBy(key, value, filter) as PlayerEntity;
   }
 }

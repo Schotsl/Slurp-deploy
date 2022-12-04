@@ -10,22 +10,16 @@ import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberden
 import SessionCollection from "../collection/SessionCollection.ts";
 import SessionEntity from "../entity/SessionEntity.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
-import PlayerEntity from "../entity/PlayerEntity.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/repository/GeneralRepository.ts";
+import PlayerRepository from "../repository/PlayerRepository.ts";
 
 export default class SessionController implements InterfaceController {
   private generalController: GeneralController;
-  private playerRepository: GeneralRepository;
+  private playerRepository: PlayerRepository;
 
   constructor(
     name: string,
   ) {
-    this.playerRepository = new GeneralRepository(
-      "player",
-      PlayerEntity,
-      PlayerCollection,
-    );
-
+    this.playerRepository = new PlayerRepository("player");
     this.generalController = new GeneralController(
       name,
       SessionEntity,
@@ -71,11 +65,7 @@ export default class SessionController implements InterfaceController {
       state,
     });
 
-    const players = await this.playerRepository.getCollection(0, 1000, {
-      key: "session",
-      value: params.uuid,
-      type: "uuidv4",
-    }) as PlayerCollection;
+    const players = await this.playerRepository.getCollection(0, 1000, undefined, params.uuid) as PlayerCollection;
 
     session.players = players.players;
     response.body = renderREST(session);
