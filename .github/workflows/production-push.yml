@@ -1,0 +1,45 @@
+name: Production push
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Setup latest Deno version
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Run Deno fmt
+        run: deno fmt --check **/*.ts
+
+      - name: Run Deno lint
+        run: deno lint **/*.ts
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Deploy to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: slurp
+          entrypoint: index.ts
+          import-map: import_map.json
