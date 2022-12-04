@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-explicit-any
+
 import { Entry, Event, Listener, Player } from "./types.ts";
 
 class Manager {
