@@ -2,20 +2,20 @@
   "$schema": "https://deno.land/x/denon@2.4.8/schema.json",
   "scripts": {
     "test": {
-      "cmd": "deno test index.ts",
+      "cmd": "deno test --import-map=import_map.json index.ts",
       "desc": "Test Slurp-session"
     },
     "start": {
-      "cmd": "deno run index.ts",
+      "cmd": "deno run --import-map=import_map.json index.ts",
       "desc": "Start Slurp-session"
     },
     "compile": {
-      "cmd": "deno compile --target=x86_64-unknown-linux-gnu index.ts",
+      "cmd": "deno compile --import-map=import_map.json --target=x86_64-unknown-linux-gnu index.ts",
       "desc": "Compile Slurp-session"
     }
   },
   "allow": {
-    "env": "MYSQL_HOSTNAME,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_PORT,MYSQL_DATABASE,JWT_SECRET,DENO_DEPLOYMENT_ID",
+    "env": "MYSQL_HOSTNAME,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_PORT,MYSQL_DATABASE,DENO_REGION,DENO_DEPLOYMENT_ID",
     "net": "aristotle-do-user-8895515-0.b.db.ondigitalocean.com:25060,0.0.0.0:8080,helper.bot-ross.dev,api.mojang.com",
     "read": ".env,.env.defaults"
   },
