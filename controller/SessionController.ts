@@ -93,7 +93,7 @@ export default class SessionController implements InterfaceController {
       state: State;
     },
   ) {
-    const shorts = [
+    const shortcodes = [
       "vodka",
       "smirnoff",
       "rum",
@@ -104,12 +104,12 @@ export default class SessionController implements InterfaceController {
       "tequila",
       "jagermeister",
     ];
-    const short = shorts[Math.floor(Math.random() * shorts.length)];
+    const shortcode = shortcodes[Math.floor(Math.random() * shortcodes.length)];
 
     const body = await request.body();
     const value = await body.value;
 
-    value.short = short;
+    value.shortcode = shortcode;
     response.body = await this.generalController.addObject({
       request,
       response,

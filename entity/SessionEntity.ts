@@ -6,6 +6,6 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/other/Columns.ts";
 
 export default class SessionEntity extends BaseEntity {
-  public short = new VarcharColumn("short");
+  public shortcode = new VarcharColumn("shortcode");
   public active = new BooleanColumn("active", true, true);
 }

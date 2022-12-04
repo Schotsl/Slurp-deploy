@@ -119,17 +119,17 @@ export default class PlayerController implements InterfaceController {
       await this.sessionRepository.getObject(value.session);
     } catch {
       try {
-        // If no valid UUID has been provided we'll try too look it up by short
+        // If no valid UUID has been provided we'll try too look it up by shortcode
         const session = value.session;
         const entity = await this.sessionRepository.getObjectBy(
-          "short",
+          "shortcode",
           session,
         );
 
         value.session = entity.uuid.getValue();
       } catch {
-        // If no valid UUID or short has been provided we'll abort
-        throw new InvalidProperty("session", "UUID or short");
+        // If no valid UUID or shortcode has been provided we'll abort
+        throw new InvalidProperty("session", "UUID or shortcode");
       }
     }
 
