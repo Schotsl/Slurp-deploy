@@ -40,7 +40,10 @@ export default class PlayerRepository implements InterfaceRepository {
       : "SELECT COUNT(uuid) AS total FROM player WHERE session = UNHEX(REPLACE(?, '-', ''))";
 
     const promises = [
-      mysqlClient.execute(fetch, session ? [session, limit, offset] : [limit, offset]),
+      mysqlClient.execute(
+        fetch,
+        session ? [session, limit, offset] : [limit, offset],
+      ),
       mysqlClient.execute(count),
     ];
 
@@ -81,7 +84,15 @@ export default class PlayerRepository implements InterfaceRepository {
     return await this.generalRepository.updateObject(object) as PlayerEntity;
   }
 
-  public async getObjectBy(key: string, value: string, filter: Filter): Promise<PlayerEntity> {
-    return await this.generalRepository.getObjectBy(key, value, filter) as PlayerEntity;
+  public async getObjectBy(
+    key: string,
+    value: string,
+    filter: Filter,
+  ): Promise<PlayerEntity> {
+    return await this.generalRepository.getObjectBy(
+      key,
+      value,
+      filter,
+    ) as PlayerEntity;
   }
 }

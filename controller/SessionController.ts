@@ -65,7 +65,12 @@ export default class SessionController implements InterfaceController {
       state,
     });
 
-    const players = await this.playerRepository.getCollection(0, 1000, undefined, params.uuid) as PlayerCollection;
+    const players = await this.playerRepository.getCollection(
+      0,
+      1000,
+      undefined,
+      params.uuid,
+    ) as PlayerCollection;
 
     session.players = players.players;
     response.body = renderREST(session);

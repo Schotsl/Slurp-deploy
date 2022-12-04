@@ -1,4 +1,5 @@
 import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/errors.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/helper.ts";
 import {
   Request,
   Response,
@@ -10,7 +11,7 @@ import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberden
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
-import managerPersonal from "../managerPersonal.ts";
+import sessionManager from "../sessionManager.ts";
 
 export default class EntryController implements InterfaceController {
   private generalController: GeneralController;
@@ -80,8 +81,6 @@ export default class EntryController implements InterfaceController {
     const body = await request.body();
     const value = await body.value;
 
-    await this.generalController.addObject({ request, response, state, value });
-
     if (
       value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0
     ) {
@@ -91,20 +90,9 @@ export default class EntryController implements InterfaceController {
       );
     }
 
-    // if (!value.giveable && (value.shots < 0 || value.sips < 0)) {
-    //   manager.updateTaken(session);
-    //   manager.updateGraph(session);
-    //   manager.updateRemaining(session);
-    // }
+    const entity = await this.generalController.addObject({ request, response, state, value });
+    const parsed = renderREST(entity);
 
-    // if (
-    // !value.giveable && !value.transfer && (value.shots < 0 || value.sips < 0)
-    // ) {
-    // manager.updateGraph(value.player);
-    // }
-
-    // if (!value.giveable && (value.shots > 0 || value.sips > 0)) {
-    managerPersonal.updateStorage(value.player);
-    // }
+    sessionManager.sessionEntry(parsed);
   }
 }

@@ -20,6 +20,8 @@ import PlayerEntity from "../entity/PlayerEntity.ts";
 import SessionEntity from "../entity/SessionEntity.ts";
 import SessionCollection from "../collection/SessionCollection.ts";
 
+import sessionManager from "../sessionManager.ts";
+
 export default class PlayerController implements InterfaceController {
   private playerRepository: PlayerRepository;
   private sessionRepository: GeneralRepository;
@@ -131,6 +133,12 @@ export default class PlayerController implements InterfaceController {
       }
     }
 
-    await this.generalController.addObject({ request, response, value, state });
+    const result = await this.generalController.addObject({ request, response, value, state });
+
+    // We're requesting the same data again but with a custom repository
+    const entity = await this.playerRepository.getObject(result.uuid);
+    const parsed = renderREST(entity);
+
+    sessionManager.sessionPlayer(parsed);
   }
 }
