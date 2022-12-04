@@ -133,7 +133,12 @@ export default class PlayerController implements InterfaceController {
       }
     }
 
-    const result = await this.generalController.addObject({ request, response, value, state });
+    const result = await this.generalController.addObject({
+      request,
+      response,
+      value,
+      state,
+    });
 
     // We're requesting the same data again but with a custom repository
     const entity = await this.playerRepository.getObject(result.uuid);

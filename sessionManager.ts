@@ -34,7 +34,7 @@ class Manager {
   private sendEvent(listener: Listener, data: any) {
     const socket = listener.socket;
     const message = JSON.stringify(data);
-    
+
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(message);
     }
