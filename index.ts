@@ -13,5 +13,3 @@ server.use(socketRouter.routes());
 server.use(sessionRouter.routes());
 
 server.listen(8080);
-
-console.log("Server is running on port 8080");
