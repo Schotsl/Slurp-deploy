@@ -6,7 +6,9 @@ import { authorizationHandler } from "../middleware.ts";
 const sessionController = new SessionController("session");
 const sessionRouter = new Router({ prefix: `/v1/session` });
 
-const sessionCollection = sessionController.getCollection.bind(sessionController);
+const sessionCollection = sessionController.getCollection.bind(
+  sessionController,
+);
 const sessionRemove = sessionController.removeObject.bind(sessionController);
 const sessionObject = sessionController.getObject.bind(sessionController);
 const sessionPost = sessionController.addObject.bind(sessionController);

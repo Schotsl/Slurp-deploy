@@ -6,7 +6,10 @@ import {
 
 import { createToken } from "../middleware.ts";
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
-import { InvalidProperty, MissingProperty } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/errors.ts";
+import {
+  InvalidProperty,
+  MissingProperty,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/errors.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
@@ -51,10 +54,8 @@ export default class PlayerController implements InterfaceController {
         key: "session",
         type: "uuidv4",
         value: "session",
-      }
+      },
     );
-
-
   }
 
   async getCollection(

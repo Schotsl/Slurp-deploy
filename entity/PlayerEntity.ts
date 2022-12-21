@@ -1,7 +1,10 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/entity/BaseEntity.ts";
 
 import { Consumable } from "../types.ts";
-import { UUIDColumn, VarcharColumn } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/other/Columns.ts";
+import {
+  UUIDColumn,
+  VarcharColumn,
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/other/Columns.ts";
 
 export default class PlayerEntity extends BaseEntity {
   public session = new UUIDColumn("session", true);

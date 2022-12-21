@@ -37,7 +37,7 @@ export default class SessionController implements InterfaceController {
         key: "uuid",
         type: "uuidv4",
         value: "session",
-      }
+      },
     );
   }
 
