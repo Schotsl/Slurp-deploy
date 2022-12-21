@@ -1,29 +1,43 @@
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/helper.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
 import SessionCollection from "../collection/SessionCollection.ts";
 import SessionEntity from "../entity/SessionEntity.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
+import { createToken } from "../middleware.ts";
 
 export default class SessionController implements InterfaceController {
   private generalController: GeneralController;
+  private secondController: GeneralController;
   private playerRepository: PlayerRepository;
 
   constructor(
     name: string,
   ) {
     this.playerRepository = new PlayerRepository("player");
+
+    this.secondController = new GeneralController(
+      name,
+      SessionEntity,
+      SessionCollection,
+    );
+
     this.generalController = new GeneralController(
       name,
       SessionEntity,
       SessionCollection,
+      {
+        key: "uuid",
+        type: "uuidv4",
+        value: "session",
+      }
     );
   }
 
@@ -110,11 +124,18 @@ export default class SessionController implements InterfaceController {
     const value = await body.value;
 
     value.shortcode = shortcode;
-    response.body = await this.generalController.addObject({
+
+    const entity = await this.secondController.addObject({
       request,
       response,
       state,
       value,
     });
+
+    const result = renderREST(entity);
+
+    result.token = await createToken(entity.uuid);
+
+    response.body = result;
   }
 }

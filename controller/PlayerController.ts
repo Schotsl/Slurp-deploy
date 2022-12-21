@@ -4,16 +4,14 @@ import {
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/helper.ts";
-import {
-  InvalidProperty,
-  MissingProperty,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/errors.ts";
+import { createToken } from "../middleware.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
+import { InvalidProperty, MissingProperty } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/errors.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerEntity from "../entity/PlayerEntity.ts";
 
@@ -25,6 +23,8 @@ import sessionManager from "../sessionManager.ts";
 export default class PlayerController implements InterfaceController {
   private playerRepository: PlayerRepository;
   private sessionRepository: GeneralRepository;
+
+  private secondController: GeneralController;
   private generalController: GeneralController;
 
   constructor(
@@ -36,11 +36,25 @@ export default class PlayerController implements InterfaceController {
       SessionEntity,
       SessionCollection,
     );
-    this.generalController = new GeneralController(
+
+    this.secondController = new GeneralController(
       name,
       PlayerEntity,
       PlayerCollection,
     );
+
+    this.generalController = new GeneralController(
+      name,
+      PlayerEntity,
+      PlayerCollection,
+      {
+        key: "session",
+        type: "uuidv4",
+        value: "session",
+      }
+    );
+
+
   }
 
   async getCollection(
@@ -49,11 +63,13 @@ export default class PlayerController implements InterfaceController {
       state: State;
     },
   ) {
-    const { offset, limit } = state;
+    const { offset, limit, session } = state;
 
     const result = await this.playerRepository.getCollection(
       offset,
       limit,
+      undefined,
+      session,
     );
 
     const parsed = renderREST(result);
@@ -78,13 +94,20 @@ export default class PlayerController implements InterfaceController {
   }
 
   async getObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
     const uuid = params.uuid;
-    const result = await this.playerRepository.getObject(uuid);
+    const session = state.session;
+    const result = await this.playerRepository.getObject(
+      uuid,
+      undefined,
+      session,
+    );
+
     const parsed = renderREST(result);
 
     response.body = parsed;
@@ -128,12 +151,12 @@ export default class PlayerController implements InterfaceController {
 
         value.session = entity.uuid.getValue();
       } catch {
-        // If no valid UUID or shortcode has been provided we'll abort
+        // If no valid UUID or shortcode has been provided we'll abort\
         throw new InvalidProperty("session", "UUID or shortcode");
       }
     }
 
-    const result = await this.generalController.addObject({
+    const result = await this.secondController.addObject({
       request,
       response,
       value,
@@ -145,5 +168,9 @@ export default class PlayerController implements InterfaceController {
     const parsed = renderREST(entity);
 
     sessionManager.sessionPlayer(parsed);
+
+    result.token = await createToken(result.session, result.uuid);
+
+    response.body = result;
   }
 }

@@ -1,13 +1,13 @@
-import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/errors.ts";
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/helper.ts";
+import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/errors.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/InterfaceController.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
@@ -23,6 +23,11 @@ export default class EntryController implements InterfaceController {
       name,
       EntryEntity,
       EntryCollection,
+      {
+        key: "session",
+        type: "uuidv4",
+        value: "session",
+      },
     );
   }
 
@@ -81,6 +86,11 @@ export default class EntryController implements InterfaceController {
     const body = await request.body();
     const value = await body.value;
 
+    // If the player is not specified we'll assume the current player receives the entry
+    if (typeof value.player === "undefined") value.player = state.player;
+
+    value.session = state.session;
+
     if (
       value.shots > 0 && value.sips < 0 || value.shots < 0 && value.sips > 0
     ) {
@@ -96,6 +106,7 @@ export default class EntryController implements InterfaceController {
       state,
       value,
     });
+
     const parsed = renderREST(entity);
 
     sessionManager.sessionEntry(parsed);

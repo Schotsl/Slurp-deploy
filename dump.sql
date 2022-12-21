@@ -26,6 +26,7 @@ CREATE TABLE player (
 CREATE TABLE entry (
 	uuid BINARY(16) NOT NULL,
 	player BINARY(16) NOT NULL,
+	session BINARY(16) NOT NULL,
 
 	sips TINYINT DEFAULT 0,
 	shots TINYINT DEFAULT 0,
