@@ -1,6 +1,6 @@
 import PlayerController from "../controller/PlayerController.ts";
 
-import { Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+import { Router } from "https://deno.land/x/oak@v12.0.0/mod.ts";
 import { authorizationHandler } from "../middleware.ts";
 
 const playerController = new PlayerController("player");
