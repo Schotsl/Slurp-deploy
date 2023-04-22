@@ -31,7 +31,7 @@ export function generateShortcode() {
   const alcohol = drinks[Math.floor(Math.random() * drinks.length)];
   const number = generateNumber(100, 999);
 
-  const combined = `${prefix} ${alcohol} ${number}`;
+  const combined = `${prefix}-${alcohol}-${number}`;
   const capitalized = combined.charAt(0).toUpperCase() + combined.slice(1);
 
   return capitalized;
