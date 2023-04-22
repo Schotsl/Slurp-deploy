@@ -110,20 +110,31 @@ export default class SessionController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
-
-    value.shortcode = generateShortcode();
-
-    const entity = await this.secondController.addObject({
-      request,
-      response,
-      state,
-      value,
-    });
-
+  
+    let success = false;
+    let entity;
+  
+    while (!success) {
+      try {
+        value.shortcode = generateShortcode();
+  
+        entity = await this.secondController.addObject({
+          request,
+          response,
+          state,
+          value,
+        });
+  
+        success = true;
+      } catch {
+        success = false;
+      }
+    }
+  
     const result = renderREST(entity);
 
     result.token = await createToken(entity.uuid);
-
+    
     response.body = result;
   }
 }
