@@ -13,7 +13,7 @@ const server = new Server();
 server.use(playerRouter.routes());
 server.use(sessionRouter.routes());
 
-server.use(authorizationHandler);
+// server.use(authorizationHandler);
 
 server.use(entryRouter.routes());
 server.use(socketRouter.routes());
