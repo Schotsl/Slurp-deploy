@@ -2,7 +2,6 @@
 
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
 
-import PlayerCollection from "./collection/PlayerCollection.ts";
 import PlayerRepository from "./repository/PlayerRepository.ts";
 
 import SessionEntity from "./entity/SessionEntity.ts";
@@ -72,17 +71,15 @@ class Manager {
   }
 
   private async getSession(uuid: string) {
-    const session = await this.sessionRepository.getObject(uuid);
-    const players = await this.playerRepository.getCollection(
-      0,
-      1000,
-      undefined,
-      uuid,
-    ) as PlayerCollection;
+    const sessionObject = await this.sessionRepository.getObject(uuid);
+    const sessionParsed = renderREST(sessionObject);
 
-    session.players = players.players;
+    const playersObject = await this.playerRepository.getCollection(0, 1000, undefined, uuid);
+    const playersParsed = renderREST(playersObject);
 
-    return renderREST(session);
+    sessionParsed.players = playersParsed.players;
+
+    return sessionParsed;
   }
 }
 
