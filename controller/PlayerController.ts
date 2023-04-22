@@ -135,7 +135,8 @@ export default class PlayerController implements InterfaceController {
     const value = await body.value;
 
     if (typeof value.session === "undefined") {
-      throw new MissingProperty("session");
+      response.body = "Missing session";
+      return;
     }
 
     try {
@@ -153,7 +154,8 @@ export default class PlayerController implements InterfaceController {
         value.session = entity.uuid.getValue();
       } catch {
         // If no valid UUID or shortcode has been provided we'll abort\
-        throw new InvalidProperty("session", "UUID or shortcode");
+        response.body = "Invalid session";
+        return;
       }
     }
 
