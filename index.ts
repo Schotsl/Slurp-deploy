@@ -12,10 +12,10 @@ const server = new Server();
 // We'll import the playerRouter and sessionRouter first since POST doesn't require authorization
 server.use(playerRouter.routes());
 server.use(sessionRouter.routes());
+server.use(socketRouter.routes());
 
-// server.use(authorizationHandler);
+server.use(authorizationHandler);
 
 server.use(entryRouter.routes());
-server.use(socketRouter.routes());
 
 server.listen(8080);

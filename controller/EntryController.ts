@@ -8,6 +8,7 @@ import {
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
 
@@ -15,6 +16,7 @@ import sessionManager from "../sessionManager.ts";
 
 export default class EntryController implements InterfaceController {
   private generalController: GeneralController;
+  private generalRepository: GeneralRepository;
 
   constructor(
     name: string,
@@ -28,6 +30,12 @@ export default class EntryController implements InterfaceController {
         type: "uuidv4",
         value: "session",
       },
+    );
+
+    this.generalRepository = new GeneralRepository(
+      name,
+      EntryEntity,
+      EntryCollection,
     );
   }
 
