@@ -1,11 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
 
 import PlayerRepository from "./repository/PlayerRepository.ts";
+import graphManager from "./graphManager.ts";
 
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
-import { Entry, Event, Listener, Player } from "./types.ts";
+import { Entry, Listener, Player } from "./types.ts";
 
 class Manager {
+  private graphListeners: Listener[] = [];
   private listeners: Listener[] = [];
   private repository: PlayerRepository;
 
@@ -13,26 +15,39 @@ class Manager {
     this.repository = new PlayerRepository("player");
   }
 
-  addListener(session: string, socket: WebSocket) {
+  addListener(session: string, socket: WebSocket, type: "graph" | "session") {
     const listener = { session, socket };
 
-    this.listeners.push(listener);
+    if (type === "graph") {
+      this.graphListeners.push(listener);
+    } else {
+      this.listeners.push(listener);
+    }
 
     socket.onopen = async () => {
-      const sessionObject = await this.getPlayers(session);
-      const sessionEvent = Event.SessionServer;
-      const sessionData = { event: sessionEvent, session: sessionObject };
-
-      this.sendEvent({ session, socket }, sessionData);
+      if (type === "graph") {
+        const graphData = await graphManager.getLineChart(session);
+        this.sendEvent({ session, socket }, graphData);
+      } else {
+        const playerArray = await this.getPlayers(session);
+        this.sendEvent({ session, socket }, playerArray);
+      }
     };
   }
 
-  sessionEntry(entry: Entry) {
-    const players = this.getPlayers(entry.session);
+  async sessionEntry(entry: Entry) {
+    const graphData = await graphManager.getLineChart(entry.session);
+    const playerData = this.getPlayers(entry.session);
 
     this.listeners.forEach((listener) => {
       if (listener.session === entry.session) {
-        this.sendEvent(listener, players);
+        this.sendEvent(listener, playerData);
+      }
+    });
+
+    this.graphListeners.forEach((listener) => {
+      if (listener.session === entry.session) {
+        this.sendEvent(listener, graphData);
       }
     });
   }
@@ -57,7 +72,12 @@ class Manager {
   }
 
   private async getPlayers(uuid: string) {
-    const collectionObject = await this.repository.getCollection(0, 1000, undefined, uuid);
+    const collectionObject = await this.repository.getCollection(
+      0,
+      1000,
+      undefined,
+      uuid,
+    );
     const collectionParsed = renderREST(collectionObject);
 
     return collectionParsed.players;

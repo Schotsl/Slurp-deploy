@@ -8,7 +8,14 @@ socketRouter.get("/session/:uuid", async (ctx) => {
   const socket = await ctx.upgrade();
   const session = ctx.params.uuid;
 
-  sessionManager.addListener(session, socket);
+  sessionManager.addListener(session, socket, "session");
+});
+
+socketRouter.get("/graph/:uuid", async (ctx) => {
+  const socket = await ctx.upgrade();
+  const session = ctx.params.uuid;
+
+  sessionManager.addListener(session, socket, "graph");
 });
 
 export default socketRouter;
