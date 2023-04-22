@@ -18,4 +18,11 @@ socketRouter.get("/graph/:uuid", async (ctx) => {
   sessionManager.addListener(session, socket, "graph");
 });
 
+socketRouter.get("/bars/:uuid", async (ctx) => {
+  const socket = await ctx.upgrade();
+  const session = ctx.params.uuid;
+
+  sessionManager.addListener(session, socket, "bars");
+});
+
 export default socketRouter;

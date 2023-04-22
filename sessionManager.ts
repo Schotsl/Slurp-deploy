@@ -7,41 +7,53 @@ import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v
 import { Entry, Listener, Player } from "./types.ts";
 
 class Manager {
+  private sessionListeners: Listener[] = [];
   private graphListeners: Listener[] = [];
-  private listeners: Listener[] = [];
+  private barsListeners: Listener[] = [];
+  
   private repository: PlayerRepository;
 
   constructor() {
     this.repository = new PlayerRepository("player");
   }
 
-  addListener(session: string, socket: WebSocket, type: "graph" | "session") {
+  async addListener(session: string, socket: WebSocket, type: "graph" | "session" | "bars") {
     const listener = { session, socket };
 
-    if (type === "graph") {
-      this.graphListeners.push(listener);
-    } else {
-      this.listeners.push(listener);
+    let data: any;
+
+    switch(type) {
+      case "graph":
+        data = await graphManager.getLineChart(session);
+        this.graphListeners.push(listener);
+        break;
+      case "bars":
+        data = await graphManager.getBarChart(session);
+        this.barsListeners.push(listener);
+        break;
+      case "session":
+        data = await this.getPlayers(session);
+        this.sessionListeners.push(listener);
+        break;
     }
 
-    socket.onopen = async () => {
-      if (type === "graph") {
-        const graphData = await graphManager.getLineChart(session);
-        this.sendEvent({ session, socket }, graphData);
-      } else {
-        const playerArray = await this.getPlayers(session);
-        this.sendEvent({ session, socket }, playerArray);
-      }
-    };
+    this.sendEvent({ session, socket }, data);
   }
 
   async sessionEntry(entry: Entry) {
     const graphData = await graphManager.getLineChart(entry.session);
-    const playerData = this.getPlayers(entry.session);
+    const barsData = await graphManager.getBarChart(entry.session);
+    const playerData = await this.getPlayers(entry.session);
 
-    this.listeners.forEach((listener) => {
+    this.sessionListeners.forEach((listener) => {
       if (listener.session === entry.session) {
         this.sendEvent(listener, playerData);
+      }
+    });
+
+    this.barsListeners.forEach((listener) => {
+      if (listener.session === entry.session) {
+        this.sendEvent(listener, barsData);
       }
     });
 
@@ -52,10 +64,10 @@ class Manager {
     });
   }
 
-  sessionPlayer(player: Player) {
-    const players = this.getPlayers(player.session);
+  async sessionPlayer(player: Player) {
+    const players = await this.getPlayers(player.session);
 
-    this.listeners.forEach((listener) => {
+    this.sessionListeners.forEach((listener) => {
       if (listener.session === player.session) {
         this.sendEvent(listener, players);
       }
@@ -79,7 +91,6 @@ class Manager {
       uuid,
     );
     const collectionParsed = renderREST(collectionObject);
-
     return collectionParsed.players;
   }
 }
