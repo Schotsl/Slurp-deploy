@@ -1,10 +1,10 @@
 import { create, verify } from "https://deno.land/x/djwt@v2.3/mod.ts";
-import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/helper.ts";
-import { Request, State } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+import { initializeEnv } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
+import { Request, State } from "https://deno.land/x/oak@v12.2.0/mod.ts";
 import {
   InvalidAuthorization,
   MissingAuthorization,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/errors.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/errors.ts";
 
 initializeEnv([
   "JWT_SECRET",
