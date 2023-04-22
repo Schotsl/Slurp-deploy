@@ -1,28 +1,16 @@
 // deno-lint-ignore-file no-explicit-any
 
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
-
 import PlayerRepository from "./repository/PlayerRepository.ts";
-
-import SessionEntity from "./entity/SessionEntity.ts";
-import SessionCollection from "./collection/SessionCollection.ts";
 
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
 import { Entry, Event, Listener, Player } from "./types.ts";
 
 class Manager {
   private listeners: Listener[] = [];
-
-  private playerRepository: PlayerRepository;
-  private sessionRepository: GeneralRepository;
+  private repository: PlayerRepository;
 
   constructor() {
-    this.playerRepository = new PlayerRepository("player");
-    this.sessionRepository = new GeneralRepository(
-      "session",
-      SessionEntity,
-      SessionCollection,
-    );
+    this.repository = new PlayerRepository("player");
   }
 
   addListener(session: string, socket: WebSocket) {
@@ -31,7 +19,7 @@ class Manager {
     this.listeners.push(listener);
 
     socket.onopen = async () => {
-      const sessionObject = await this.getSession(session);
+      const sessionObject = await this.getPlayers(session);
       const sessionEvent = Event.SessionServer;
       const sessionData = { event: sessionEvent, session: sessionObject };
 
@@ -40,23 +28,21 @@ class Manager {
   }
 
   sessionEntry(entry: Entry) {
+    const players = this.getPlayers(entry.session);
+
     this.listeners.forEach((listener) => {
       if (listener.session === entry.session) {
-        const event = Event.SessionEntry;
-        const data = { event, entry };
-
-        this.sendEvent(listener, data);
+        this.sendEvent(listener, players);
       }
     });
   }
 
   sessionPlayer(player: Player) {
+    const players = this.getPlayers(player.session);
+
     this.listeners.forEach((listener) => {
       if (listener.session === player.session) {
-        const event = Event.SessionPlayer;
-        const data = { event, player };
-
-        this.sendEvent(listener, data);
+        this.sendEvent(listener, players);
       }
     });
   }
@@ -70,16 +56,11 @@ class Manager {
     }
   }
 
-  private async getSession(uuid: string) {
-    const sessionObject = await this.sessionRepository.getObject(uuid);
-    const sessionParsed = renderREST(sessionObject);
+  private async getPlayers(uuid: string) {
+    const collectionObject = await this.repository.getCollection(0, 1000, undefined, uuid);
+    const collectionParsed = renderREST(collectionObject);
 
-    const playersObject = await this.playerRepository.getCollection(0, 1000, undefined, uuid);
-    const playersParsed = renderREST(playersObject);
-
-    sessionParsed.players = playersParsed.players;
-
-    return sessionParsed;
+    return collectionParsed.players;
   }
 }
 
