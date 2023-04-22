@@ -35,4 +35,5 @@ export interface Player {
 export enum Event {
   SessionEntry = 0,
   SessionPlayer = 1,
+  SessionServer = 2,
 }
