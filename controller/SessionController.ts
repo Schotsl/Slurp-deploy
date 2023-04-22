@@ -1,4 +1,4 @@
-import { generateShortcode } from "../helper.ts"
+import { generateShortcode } from "../helper.ts";
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
 import {
   Request,
@@ -110,31 +110,31 @@ export default class SessionController implements InterfaceController {
   ) {
     const body = await request.body();
     const value = await body.value;
-  
+
     let success = false;
     let entity;
-  
+
     while (!success) {
       try {
         value.shortcode = generateShortcode();
-  
+
         entity = await this.secondController.addObject({
           request,
           response,
           state,
           value,
         });
-  
+
         success = true;
       } catch {
         success = false;
       }
     }
-  
+
     const result = renderREST(entity);
 
     result.token = await createToken(entity.uuid);
-    
+
     response.body = result;
   }
 }
