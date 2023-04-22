@@ -1,3 +1,4 @@
+import { generateShortcode } from "../helper.ts"
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
 import {
   Request,
@@ -107,23 +108,10 @@ export default class SessionController implements InterfaceController {
       state: State;
     },
   ) {
-    const shortcodes = [
-      "vodka",
-      "smirnoff",
-      "rum",
-      "whiskey",
-      "absolut",
-      "fireball",
-      "bourbon",
-      "tequila",
-      "jagermeister",
-    ];
-    const shortcode = shortcodes[Math.floor(Math.random() * shortcodes.length)];
-
     const body = await request.body();
     const value = await body.value;
 
-    value.shortcode = shortcode;
+    value.shortcode = generateShortcode();
 
     const entity = await this.secondController.addObject({
       request,
