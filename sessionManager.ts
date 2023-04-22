@@ -10,19 +10,23 @@ class Manager {
   private sessionListeners: Listener[] = [];
   private graphListeners: Listener[] = [];
   private barsListeners: Listener[] = [];
-  
+
   private repository: PlayerRepository;
 
   constructor() {
     this.repository = new PlayerRepository("player");
   }
 
-  async addListener(session: string, socket: WebSocket, type: "graph" | "session" | "bars") {
+  async addListener(
+    session: string,
+    socket: WebSocket,
+    type: "graph" | "session" | "bars",
+  ) {
     const listener = { session, socket };
 
     let data: any;
 
-    switch(type) {
+    switch (type) {
       case "graph":
         data = await graphManager.getLineChart(session);
         this.graphListeners.push(listener);
