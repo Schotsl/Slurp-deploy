@@ -14,6 +14,7 @@ const playerPut = playerController.updateObject.bind(playerController);
 
 playerRouter.get("/", authorizationHandler, playerCollection);
 playerRouter.put("/:uuid", authorizationHandler, playerPut);
+playerRouter.get("/entity", authorizationHandler, playerObject);
 playerRouter.get("/entity/:uuid", authorizationHandler, playerObject);
 playerRouter.delete("/:uuid", authorizationHandler, playerRemove);
 

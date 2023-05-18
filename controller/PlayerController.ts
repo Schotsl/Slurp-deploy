@@ -101,7 +101,7 @@ export default class PlayerController implements InterfaceController {
       state: State;
     },
   ) {
-    const uuid = params.uuid;
+    const uuid = params.uuid ? params.uuid : state.player;
     const session = state.session;
     const result = await this.playerRepository.getObject(
       uuid,
