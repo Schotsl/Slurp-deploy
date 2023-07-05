@@ -5,6 +5,7 @@ import {
   Response,
   State,
 } from "https://deno.land/x/oak@v12.2.0/mod.ts";
+import { createToken } from "../middleware.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/InterfaceController.ts";
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
@@ -12,7 +13,7 @@ import SessionCollection from "../collection/SessionCollection.ts";
 import SessionEntity from "../entity/SessionEntity.ts";
 import PlayerCollection from "../collection/PlayerCollection.ts";
 import PlayerRepository from "../repository/PlayerRepository.ts";
-import { createToken } from "../middleware.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
 
 export default class SessionController implements InterfaceController {
   private generalController: GeneralController;
