@@ -20,33 +20,57 @@ class Manager {
 
   constructor() {
     this.repository = new PlayerRepository("player");
-    
+
     setInterval(() => this.updateListeners(), 1000);
   }
 
-  async addListener(session: string, socket: WebSocket, type: "graph" | "session" | "bars") {
+  async addListener(
+    session: string,
+    socket: WebSocket,
+    type: "graph" | "session" | "bars",
+  ) {
     const listener = { session, socket };
     this.sessions.add(session);
 
     let data: any;
     switch (type) {
       case "graph":
-        data = await this.addDataListener(listener, this.graphListeners, this.lastGraph, graphManager.getLineChart);
+        data = await this.addDataListener(
+          listener,
+          this.graphListeners,
+          this.lastGraph,
+          graphManager.getLineChart,
+        );
         break;
       case "bars":
-        data = await this.addDataListener(listener, this.barsListeners, this.lastBars, graphManager.getBarChart);
+        data = await this.addDataListener(
+          listener,
+          this.barsListeners,
+          this.lastBars,
+          graphManager.getBarChart,
+        );
         break;
       case "session":
-        data = await this.addDataListener(listener, this.sessionListeners, this.lastPlayers, this.getPlayers);
+        data = await this.addDataListener(
+          listener,
+          this.sessionListeners,
+          this.lastPlayers,
+          this.getPlayers,
+        );
         break;
     }
 
     this.sendEvent(listener, data);
   }
 
-  private async addDataListener(listener: Listener, listenersArray: Listener[], lastDataMap: any, dataRetriever: (session: string) => Promise<any>) {
+  private async addDataListener(
+    listener: Listener,
+    listenersArray: Listener[],
+    lastDataMap: any,
+    dataRetriever: (session: string) => Promise<any>,
+  ) {
     const data = await dataRetriever(listener.session);
-    
+
     lastDataMap[listener.session] = data;
     listenersArray.push(listener);
 
@@ -55,13 +79,33 @@ class Manager {
 
   async updateListeners() {
     for (const session of this.sessions) {
-      await this.updateListener(session, this.lastGraph, graphManager.getLineChart, this.graphListeners);
-      await this.updateListener(session, this.lastBars, graphManager.getBarChart, this.barsListeners);
-      await this.updateListener(session, this.lastPlayers, this.getPlayers, this.sessionListeners);
+      await this.updateListener(
+        session,
+        this.lastGraph,
+        graphManager.getLineChart,
+        this.graphListeners,
+      );
+      await this.updateListener(
+        session,
+        this.lastBars,
+        graphManager.getBarChart,
+        this.barsListeners,
+      );
+      await this.updateListener(
+        session,
+        this.lastPlayers,
+        this.getPlayers,
+        this.sessionListeners,
+      );
     }
   }
 
-  private async updateListener(session: string, lastDataMap: any, dataRetriever: (session: string) => Promise<any>, listenersArray: Listener[]) {
+  private async updateListener(
+    session: string,
+    lastDataMap: any,
+    dataRetriever: (session: string) => Promise<any>,
+    listenersArray: Listener[],
+  ) {
     const newData = await dataRetriever(session);
 
     if (JSON.stringify(lastDataMap[session]) !== JSON.stringify(newData)) {

@@ -21,8 +21,6 @@ import PlayerEntity from "../entity/PlayerEntity.ts";
 import SessionEntity from "../entity/SessionEntity.ts";
 import SessionCollection from "../collection/SessionCollection.ts";
 
-import sessionManager from "../sessionManager.ts";
-
 export default class PlayerController implements InterfaceController {
   private playerRepository: PlayerRepository;
   private sessionRepository: GeneralRepository;
