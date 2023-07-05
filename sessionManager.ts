@@ -129,7 +129,6 @@ class Manager {
   }
 
   private async getPlayers(uuid: string) {
-    console.log(this);
     const collectionObject = await this.repository.getCollection(
       0,
       1000,
