@@ -21,7 +21,7 @@ class Manager {
   constructor() {
     this.repository = new PlayerRepository("player");
 
-    setInterval(() => this.updateListeners(), 1000);
+    setInterval(() => this.updateListeners, 1000);
   }
 
   async addListener(
@@ -31,7 +31,7 @@ class Manager {
   ) {
     const listener = { session, socket };
     this.sessions.add(session);
-
+    
     let data: any;
     switch (type) {
       case "graph":
@@ -39,7 +39,7 @@ class Manager {
           listener,
           this.graphListeners,
           this.lastGraph,
-          graphManager.getLineChart,
+          graphManager.getLineChart.bind(this)
         );
         break;
       case "bars":
@@ -47,7 +47,7 @@ class Manager {
           listener,
           this.barsListeners,
           this.lastBars,
-          graphManager.getBarChart,
+          graphManager.getBarChart.bind(this),
         );
         break;
       case "session":
@@ -55,7 +55,7 @@ class Manager {
           listener,
           this.sessionListeners,
           this.lastPlayers,
-          this.getPlayers,
+          this.getPlayers.bind(this),
         );
         break;
     }
@@ -82,19 +82,19 @@ class Manager {
       await this.updateListener(
         session,
         this.lastGraph,
-        graphManager.getLineChart,
+        graphManager.getLineChart.bind(this),
         this.graphListeners,
       );
       await this.updateListener(
         session,
         this.lastBars,
-        graphManager.getBarChart,
+        graphManager.getBarChart.bind(this),
         this.barsListeners,
       );
       await this.updateListener(
         session,
         this.lastPlayers,
-        this.getPlayers,
+        this.getPlayers.bind(this),
         this.sessionListeners,
       );
     }
@@ -129,6 +129,7 @@ class Manager {
   }
 
   private async getPlayers(uuid: string) {
+    console.log(this);
     const collectionObject = await this.repository.getCollection(
       0,
       1000,
