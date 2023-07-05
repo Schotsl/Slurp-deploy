@@ -19,6 +19,7 @@ export default class SessionController implements InterfaceController {
   private generalController: GeneralController;
   private secondController: GeneralController;
   private playerRepository: PlayerRepository;
+  private sessionRepository: GeneralRepository;
 
   constructor(
     name: string,
@@ -40,6 +41,12 @@ export default class SessionController implements InterfaceController {
         type: "uuidv4",
         value: "session",
       },
+    );
+
+    this.sessionRepository = new GeneralRepository(
+      name,
+      SessionEntity,
+      SessionCollection,
     );
   }
 
@@ -86,6 +93,26 @@ export default class SessionController implements InterfaceController {
       1000,
       undefined,
       params.uuid,
+    ) as PlayerCollection;
+
+    session.players = players.players;
+    response.body = renderREST(session);
+  }
+
+  async getObjectByShortcode(
+    { response, params, state }: {
+      response: Response;
+      params: { shortcode: string };
+      state: State;
+    },
+  ) {
+    console.log("Let's og");
+    const session = await this.sessionRepository.getObjectBy("shortcode", params.shortcode) as any;
+    const players = await this.playerRepository.getCollection(
+      0,
+      1000,
+      undefined,
+      session.uuid,
     ) as PlayerCollection;
 
     session.players = players.players;
