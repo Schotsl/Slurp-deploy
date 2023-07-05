@@ -108,15 +108,11 @@ export default class EntryController implements InterfaceController {
       );
     }
 
-    const entity = await this.generalController.addObject({
+    response.body = await this.generalController.addObject({
       request,
       response,
       state,
       value,
     });
-
-    const parsed = renderREST(entity);
-
-    sessionManager.sessionEntry(parsed);
   }
 }

@@ -165,11 +165,6 @@ export default class PlayerController implements InterfaceController {
     });
 
     // We're requesting the same data again but with a custom repository
-    const entity = await this.playerRepository.getObject(result.uuid);
-    const parsed = renderREST(entity);
-
-    sessionManager.sessionPlayer(parsed);
-
     result.token = await createToken(result.session, result.uuid);
 
     response.body = result;

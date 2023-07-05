@@ -3,18 +3,25 @@
 import PlayerRepository from "./repository/PlayerRepository.ts";
 import graphManager from "./graphManager.ts";
 
+import { Listener } from "./types.ts";
 import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
-import { Entry, Listener, Player } from "./types.ts";
 
 class Manager {
-  private sessionListeners: Listener[] = [];
-  private graphListeners: Listener[] = [];
   private barsListeners: Listener[] = [];
+  private graphListeners: Listener[] = [];
+  private sessionListeners: Listener[] = [];
 
+  private sessions: string[] = [];
   private repository: PlayerRepository;
+
+  private lastBars: any = {};
+  private lastGraph: any = {};
+  private lastPlayers: any = {};
 
   constructor() {
     this.repository = new PlayerRepository("player");
+
+    setInterval(() => this.updateListeners(), 1000);
   }
 
   async addListener(
@@ -26,17 +33,22 @@ class Manager {
 
     let data: any;
 
+    this.sessions.push(session);
+
     switch (type) {
       case "graph":
         data = await graphManager.getLineChart(session);
+        this.lastGraph[session] = data;
         this.graphListeners.push(listener);
         break;
       case "bars":
         data = await graphManager.getBarChart(session);
+        this.lastBars[session] = data;
         this.barsListeners.push(listener);
         break;
       case "session":
         data = await this.getPlayers(session);
+        this.lastPlayers[session] = data;
         this.sessionListeners.push(listener);
         break;
     }
@@ -44,36 +56,40 @@ class Manager {
     this.sendEvent({ session, socket }, data);
   }
 
-  async sessionEntry(entry: Entry) {
-    const graphData = await graphManager.getLineChart(entry.session);
-    const barsData = await graphManager.getBarChart(entry.session);
-    const playerData = await this.getPlayers(entry.session);
+  async updateListeners() {
+    this.sessions.forEach(async (session) => {
+      const newBarsData = await graphManager.getBarChart(session);
+      const newGraphData = await graphManager.getLineChart(session);
+      const newPlayersData = await this.getPlayers(session);
 
-    this.sessionListeners.forEach((listener) => {
-      if (listener.session === entry.session) {
-        this.sendEvent(listener, playerData);
+      if (JSON.stringify(this.lastGraph[session]) !== JSON.stringify(newGraphData)) {
+        this.lastGraph[session] = newGraphData;
+
+        this.graphListeners.forEach((listener) => {
+          if (listener.session === session) {
+            this.sendEvent(listener, newGraphData);
+          }
+        });
       }
-    });
 
-    this.barsListeners.forEach((listener) => {
-      if (listener.session === entry.session) {
-        this.sendEvent(listener, barsData);
+      if (JSON.stringify(this.lastBars[session]) !== JSON.stringify(newBarsData)) {
+        this.lastBars[session] = newBarsData;
+
+        this.barsListeners.forEach((listener) => {
+          if (listener.session === session) {
+            this.sendEvent(listener, newBarsData);
+          }
+        });
       }
-    });
 
-    this.graphListeners.forEach((listener) => {
-      if (listener.session === entry.session) {
-        this.sendEvent(listener, graphData);
-      }
-    });
-  }
+      if (JSON.stringify(this.lastPlayers[session]) !== JSON.stringify(newPlayersData)) {
+        this.lastPlayers[session] = newPlayersData;
 
-  async sessionPlayer(player: Player) {
-    const players = await this.getPlayers(player.session);
-
-    this.sessionListeners.forEach((listener) => {
-      if (listener.session === player.session) {
-        this.sendEvent(listener, players);
+        this.sessionListeners.forEach((listener) => {
+          if (listener.session === session) {
+            this.sendEvent(listener, newPlayersData);
+          }
+        });
       }
     });
   }
