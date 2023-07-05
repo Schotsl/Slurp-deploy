@@ -1,5 +1,4 @@
 import { CustomError } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/errors.ts";
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/helper.ts";
 import {
   Request,
   Response,
@@ -11,8 +10,6 @@ import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberden
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
 import EntryCollection from "../collection/EntryCollection.ts";
 import EntryEntity from "../entity/EntryEntity.ts";
-
-import sessionManager from "../sessionManager.ts";
 
 export default class EntryController implements InterfaceController {
   private generalController: GeneralController;
