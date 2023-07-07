@@ -111,7 +111,7 @@ export default class SessionController implements InterfaceController {
       0,
       1000,
       undefined,
-      session.uuid,
+      session.uuid.getValue(),
     ) as PlayerCollection;
 
     session.players = players.players;
