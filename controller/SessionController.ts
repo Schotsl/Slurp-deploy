@@ -106,7 +106,6 @@ export default class SessionController implements InterfaceController {
       state: State;
     },
   ) {
-    console.log("Let's og");
     const session = await this.sessionRepository.getObjectBy("shortcode", params.shortcode) as any;
     const players = await this.playerRepository.getCollection(
       0,
