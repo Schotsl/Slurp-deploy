@@ -19,10 +19,10 @@ const sessionShortcode = sessionController.getObjectByShortcode.bind(sessionCont
 
 sessionRouter.get("/", authorizationHandler, sessionCollection);
 sessionRouter.put("/:uuid", authorizationHandler, sessionPut);
-sessionRouter.get("/entity/shortcode/:shortcode", sessionShortcode);
 sessionRouter.get("/entity/:uuid", authorizationHandler, sessionObject);
 sessionRouter.delete("/:uuid", authorizationHandler, sessionRemove);
 
+sessionRouter.get("/entity/shortcode/:shortcode", sessionShortcode);
 sessionRouter.post("/", sessionPost);
 
 export default sessionRouter;

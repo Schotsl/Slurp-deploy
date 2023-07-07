@@ -30,9 +30,7 @@ export function generateShortcode() {
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
   const alcohol = drinks[Math.floor(Math.random() * drinks.length)];
   const number = generateNumber(100, 999);
-
   const combined = `${prefix}-${alcohol}-${number}`;
-  const capitalized = combined.charAt(0).toUpperCase() + combined.slice(1);
 
-  return capitalized;
+  return combined;
 }
