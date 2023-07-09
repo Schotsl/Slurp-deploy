@@ -10,7 +10,7 @@ class GraphManager {
     const lineRows = await mysqlClient.query(lineQuery, lineParams);
 
     lineRows.map((row: Record<string, string>) =>
-      row.player = restoreUUID(row.player_uuid)
+      row.player_uuid = restoreUUID(row.player_uuid)
     );
 
     return lineRows;
