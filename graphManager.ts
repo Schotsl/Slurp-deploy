@@ -18,7 +18,7 @@ class GraphManager {
 
   async getBarChart(session: string) {
     const lineQuery =
-      "SELECT HEX(p.uuid) AS player_uuid, p.username AS player_username, COALESCE(units_consumed, 0) AS units_consumed, COALESCE(units_consume, 0) AS units_consume FROM player p LEFT JOIN ( SELECT player, SUM( CASE WHEN entry.sips < 0 THEN -entry.sips ELSE 0 END + CASE WHEN entry.shots < 0 THEN -entry.shots * 10 ELSE 0 END ) AS units_consumed, SUM( CASE WHEN entry.sips > 0 THEN entry.sips ELSE 0 END + CASE WHEN entry.shots > 0 THEN entry.shots * 10 ELSE 0 END ) AS units_consume FROM entry WHERE entry.giveable = 0 AND entry.transfer = 0 GROUP BY player ) AS sip_data ON p.uuid = sip_data.player WHERE p.session = UNHEX(REPLACE(?, '-', '')) ORDER BY p.username";
+      "SELECT HEX(p.uuid) AS player_uuid, p.username AS player_username, COALESCE(units_consumed, 0) AS units_consumed, COALESCE(units_to_consume - units_consumed, 0) AS units_consume FROM player p LEFT JOIN ( SELECT player, SUM(CASE WHEN entry.sips < 0 THEN ABS(entry.sips) ELSE 0 END + CASE WHEN entry.shots < 0 THEN ABS(entry.shots) * 10 ELSE 0 END) AS units_consumed, SUM(CASE WHEN entry.sips > 0 THEN entry.sips ELSE 0 END + CASE WHEN entry.shots > 0 THEN entry.shots * 10 ELSE 0 END) AS units_to_consume FROM entry WHERE entry.giveable = 0 AND entry.transfer = 0 GROUP BY player ) AS sip_data ON p.uuid = sip_data.player WHERE p.session = UNHEX(REPLACE(?, '-', '')) ORDER BY p.username";
     const lineParams = [session];
     const lineRows = await mysqlClient.query(lineQuery, lineParams);
     
