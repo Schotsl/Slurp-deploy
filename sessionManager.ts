@@ -14,14 +14,10 @@ class Manager {
   private sessions: Set<string> = new Set();
   private repository: PlayerRepository;
 
-  private lastBars: any = {};
-  private lastGraph: any = {};
-  private lastPlayers: any = {};
-
   constructor() {
     this.repository = new PlayerRepository("player");
 
-    setInterval(() => this.updateListeners, 1000);
+    setInterval(() => this.updateListeners(), 1000);
   }
 
   async addListener(
@@ -38,7 +34,6 @@ class Manager {
         data = await this.addDataListener(
           listener,
           this.graphListeners,
-          this.lastGraph,
           graphManager.getLineChart.bind(this)
         );
         break;
@@ -46,7 +41,6 @@ class Manager {
         data = await this.addDataListener(
           listener,
           this.barsListeners,
-          this.lastBars,
           graphManager.getBarChart.bind(this),
         );
         break;
@@ -54,7 +48,6 @@ class Manager {
         data = await this.addDataListener(
           listener,
           this.sessionListeners,
-          this.lastPlayers,
           this.getPlayers.bind(this),
         );
         break;
@@ -66,12 +59,10 @@ class Manager {
   private async addDataListener(
     listener: Listener,
     listenersArray: Listener[],
-    lastDataMap: any,
     dataRetriever: (session: string) => Promise<any>,
   ) {
     const data = await dataRetriever(listener.session);
 
-    lastDataMap[listener.session] = data;
     listenersArray.push(listener);
 
     return data;
@@ -81,19 +72,16 @@ class Manager {
     for (const session of this.sessions) {
       await this.updateListener(
         session,
-        this.lastGraph,
         graphManager.getLineChart.bind(this),
         this.graphListeners,
       );
       await this.updateListener(
         session,
-        this.lastBars,
         graphManager.getBarChart.bind(this),
         this.barsListeners,
       );
       await this.updateListener(
         session,
-        this.lastPlayers,
         this.getPlayers.bind(this),
         this.sessionListeners,
       );
@@ -102,21 +90,16 @@ class Manager {
 
   private async updateListener(
     session: string,
-    lastDataMap: any,
     dataRetriever: (session: string) => Promise<any>,
     listenersArray: Listener[],
   ) {
     const newData = await dataRetriever(session);
 
-    if (JSON.stringify(lastDataMap[session]) !== JSON.stringify(newData)) {
-      lastDataMap[session] = newData;
-
-      listenersArray.forEach((listener) => {
-        if (listener.session === session) {
-          this.sendEvent(listener, newData);
-        }
-      });
-    }
+    listenersArray.forEach((listener) => {
+      if (listener.session === session) {
+        this.sendEvent(listener, newData);
+      }
+    });
   }
 
   private sendEvent(listener: Listener, data: any) {
